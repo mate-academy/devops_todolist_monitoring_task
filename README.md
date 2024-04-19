@@ -1,6 +1,8 @@
 # Django ToDo list
 
-This is a todo list web application with basic features of most web apps, i.e., accounts/login, API, and interactive UI. To do this task, you will need:
+In this task you will enhance a todo list web application by adding a /metrics endpoint that returns the number of GET and POST requests in a Prometheus-compatible format.
+
+To do this task, you will need:
 
 - CSS | [Skeleton](http://getskeleton.com/)
 - JS  | [jQuery](https://jquery.com/)
@@ -28,58 +30,73 @@ python manage.py runserver
 Now you can browse the [API](http://localhost:8000/api/) or start on the [landing page](http://localhost:8000/).
 
 ## Task
+Follow the steps below to complete the task:
 
-1. Fork this repository.
-2. Modify the application code to expose `/metrics` endpoint that returns number of GET and POST requests in a Prometheus-compatible format.
-3. Add the necessary library (`prometheus_client`) to your application's requirements and ensure it is installed during the Docker build process.
-4. Use `kind` to spin up a cluster from a `cluster.yml` configuration file.
-5. Install [Prometheus](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) on the cluster.
-6. Configure your `todoapp` Helm chart to enable Prometheus to scrape metrics
-    Update `values.yaml`:
+1. Fork the repository to your GitHub account.
 
-    * Add a new section for the `ServiceMonitor` configuration:
+2. **Expose `/metrics` Endpoint**:
+   - Modify the application code to include a `/metrics` endpoint.
+   - Ensure it returns the number of GET and POST requests in a Prometheus-compatible format.
 
-        ```yaml
-        serviceMonitor:
-            enabled: true
-            labels: {}
-            interval: 10s
-            path: /metrics
-            port: http
-        ``` 
-    
-    * In the Helm chart's templates directory, create a new file named `servicemonitor.yaml`
-    * Make sure your app's `service.yaml` exposes the metrics port and has the necessary labels for the ServiceMonitor to select
-7. Apply the Helm chart to your cluster and check that the ServiceMonitor has been created.
-8. Ensure that Prometheus is scraping metrics from the `todoapp`: check the Prometheus dashboard for the target status.
-9. Create a New Grafana Dashboard:
-    * Open the Grafana UI and click on the "+" icon in the sidebar to create a new dashboard.
-    * Click "Add new panel" to start configuring your first metric visualization.
+3. **Add Prometheus Library**:
+   - Include `prometheus_client` in the application's requirements.
+   - Ensure it's installed during the Docker build process.
 
-10. Visualize Total HTTP Requests:
-    * Set the Panel Title to "Total HTTP Requests".
-    * In the query field, enter the Prometheus query to visualize the total number of HTTP requests. Use the metric             `django_http_requests_total`:
+4. **Cluster Setup**:
+   - Use `kind` to spin up a cluster from a `cluster.yml` configuration file.
+
+5. **Install Prometheus**:
+   - Install [Prometheus](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) on the cluster using the provided Helm chart.
+
+6. **Configure Helm Chart**:
+   - Update the `values.yaml` file in the `todoapp` Helm chart:
+   * Add a new section for the `ServiceMonitor` configuration:
+     ```yaml
+     serviceMonitor:
+         enabled: true
+         labels: {}
+         interval: 10s
+         path: /metrics
+         port: http
+     ```
+   - Create a new file named `servicemonitor.yaml` in the Helm chart's templates directory.
+   - Ensure the app's `service.yaml` exposes the metrics port and has the necessary labels for the ServiceMonitor.
+
+7. **Apply Helm Chart**:
+   - Apply the Helm chart to the cluster.
+   - Verify that the ServiceMonitor has been created.
+
+8. **Verify Prometheus Scraping**:
+   - Check Prometheus dashboard for the target status to ensure it's scraping metrics from the `todoapp`.
+
+9. **Create Grafana Dashboard**:
+   - Open the Grafana UI and click on the "+" icon in the sidebar to create a new dashboard.
+   - Click "Add new panel" to start configuring your first metric visualization.
+
+10. **Visualize Total HTTP Requests**:
+    - Set up a panel titled "Total HTTP Requests".
+    - Use the query to visualize the total number of HTTP requests:
         ```
         sum(rate(django_http_requests_total[5m])) by (method)
         ```
-    * This query will show the rate of HTTP requests per second, averaged over the past 5 minutes, broken down by method (GET or POST).
-    * Choose a visualization type such as Graph, Bar Gauge, or Stat to represent this data.
+    - This query will show the rate of HTTP requests per second, averaged over the past 5 minutes, broken down by method (GET or POST).
+    - Choose a visualization type such as Graph, Bar Gauge, or Stat to represent this data.
 
-11. Visualize HTTP Requests Creation Time:
-    * Add another panel to the dashboard.
-    * Set the Panel Title to "HTTP Requests Creation Time".
-    * In the query field, use the `django_http_requests_created` metric to visualize the creation time of the requests:
+11. **Visualize HTTP Requests Creation Time**:
+    - Add a panel titled "HTTP Requests Creation Time".
+    - Use the query to visualize the creation time of the requests:
         ```
         django_http_requests_created
         ```
-    * This metric represents the time when the HTTP request counters were created or reset, which can be useful for identifying when the application was restarted.
-    * Choose a Singlestat or Stat visualization for this metric.
+    - This metric represents the time when the HTTP request counters were created or reset, which can be useful for identifying when the application was restarted.
+    - Choose a Singlestat or Stat visualization for this metric.
 
-12. Tweak Panel Settings:
-    * Customize the panel settings such as axes, legend, and thresholds according to your preference.
-    * Use Grafana’s built-in functions to format the display, such as setting the unit to "requests per second" for the total requests panel.
+12. **Customize Panel Settings**:
+    - Adjust panel settings such as axes, legend, and thresholds as desired.
+    - Utilize Grafana’s functions for formatting the display.
 
-13. Save and Share the Dashboard:
-    * After configuring the panels, save your dashboard.
-    * Export the dashboard JSON from the dashboard settings menu for version control and sharing.
-14. Create PR with your changes and attach it for validation on a platform.
+13. **Save and Share Dashboard**:
+    - Save the configured dashboard.
+    - Export the dashboard JSON for version control and sharing.
+
+14. Submit a PR with your changes for validation on the specified platform.
