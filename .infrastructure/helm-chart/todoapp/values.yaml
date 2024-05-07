@@ -1,0 +1,77 @@
+todoapp:
+  namespace: todoapp
+  image:
+    repository:  ikulyk404/todoapp
+    tag: "4.0.1"
+  replicaCount: 1
+
+  secrets:
+    SECRET_KEY: "QGUyKHl4KXYmdGdoM19zPTB5amEtaSFkcGVieHN6XmRnNDd4KS1rJmtxXzN6Zio5ZSoK"
+    DB_NAME: "YXBwX2RiCg=="
+    DB_USER: "YXBwX3VzZXI="
+    DB_PASSWORD: "MTIzNA=="
+    DB_HOST: "bXlzcWwtMC5teXNxbC5teXNxbC5zdmMuY2x1c3Rlci5sb2NhbAo="
+
+  rollingUpdate:
+    maxSurge: "25%"
+    maxUnavailable: 1
+
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 8080
+
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+
+    hosts:
+      - host: chart-example.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls: []
+
+  resources:
+    limits:
+      cpu: "100m"
+      memory: "128Mi"
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+
+  livenessProbe:
+    httpGet:
+      path: "api/health"
+      port: 8080
+    initialDelaySeconds: 60
+    periodSeconds: 5
+
+  readinessProbe:
+    httpGet:
+      path: "api/ready"
+      port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 5
+
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 70
+
+  volumes:
+    persistentVolume:
+      capacity: "1Gi"
+    persistentVolumeClaim:
+      requestStorage: "1Gi"
+
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: prometheus
+    interval: 10s
+    path: /api/metrics
+    port: http
