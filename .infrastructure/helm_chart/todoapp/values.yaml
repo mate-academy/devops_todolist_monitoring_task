@@ -1,0 +1,47 @@
+namespace: todoapp
+
+todoapp:
+  secret:
+    SECRET_KEY: "secret-key"
+    DB_NAME: "app_db"
+    DB_USER: "app_user"
+    DB_PASSWORD: "1234"
+    DB_HOST: "mysql-0.mysql.mysql.svc.cluster.local"
+  resources:
+    requests:
+      cpu: "150m"
+      memory: "256Mi"
+    limits:
+      cpu: "150m"
+      memory: "256Mi"
+
+  rollingUpdate:
+    maxUnavailable: 1
+    maxSurge: 1
+
+  affinity:
+    nodeAffinity:
+      key: app
+      values: todoapp
+
+image:
+  todoapp:
+    repository: ikulyk404/todoapp
+    tag: "4.0.1"
+
+hpa:
+  todoapp:
+    minReplicas: 2
+    maxReplicas: 5
+    cpuUtilization: 70
+    memoryUtilization: 70
+
+persistentVolume:
+  todoapp:
+    capacity: "1Gi"
+
+persistentVolumeClaim:
+  todoapp:
+    storage: "1Gi"
+
+serviceAccount: todoapp
