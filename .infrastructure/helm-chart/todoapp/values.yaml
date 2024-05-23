@@ -50,5 +50,5 @@ serviceMonitor:
     interval: 10s
     path: /metrics
     port: http
-    
+
 serviceAccount: todoapp
