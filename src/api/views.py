@@ -87,5 +87,4 @@ def metrics(request):
     elif request.method == 'POST':
         post_request_counter.inc()
 
-    metrics_page = generate_latest()
-    return HttpResponse(metrics_page, content_type=CONTENT_TYPE_LATEST)
+    return HttpResponse(generate_latest(), content_type='text/plain; version=0.0.4')
