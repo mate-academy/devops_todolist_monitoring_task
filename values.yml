@@ -1462,14 +1462,14 @@ kubeControllerManager:
     ## If null or unset, the value is determined dynamically based on target Kubernetes version due to change
     ## of default port in Kubernetes 1.22.
     ##
-    port: null
-    targetPort: null
+    port: 10257
+    targetPort: 10257
     ipDualStack:
       enabled: false
       ipFamilies: ["IPv6", "IPv4"]
       ipFamilyPolicy: "PreferDualStack"
-    # selector:
-    #   component: kube-controller-manager
+    selector:
+      component: kube-controller-manager-proxy
 
   serviceMonitor:
     enabled: true
@@ -1795,9 +1795,9 @@ kubeEtcd:
     port: http-metrics
 
     jobLabel: jobLabel
-    selector: {}
-    #  matchLabels:
-    #    component: etcd
+    selector:
+      matchLabels:
+        component: etcd
 
     ## MetricRelabelConfigs to apply to samples after scraping, but before ingestion.
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#relabelconfig
@@ -1891,9 +1891,9 @@ kubeScheduler:
     port: http-metrics
 
     jobLabel: jobLabel
-    selector: {}
-    #  matchLabels:
-    #    component: kube-scheduler
+    selector:
+      matchLabels:
+        component: kube-scheduler
 
     ## Skip TLS certificate validation when scraping
     insecureSkipVerify: null
@@ -1983,9 +1983,9 @@ kubeProxy:
     port: http-metrics
 
     jobLabel: jobLabel
-    selector: {}
-    #  matchLabels:
-    #    k8s-app: kube-proxy
+    selector:
+      matchLabels:
+        k8s-app: kube-proxy
 
     ## Enable scraping kube-proxy over https.
     ## Requires proper certs (not self-signed) and delegated authentication/authorization checks
@@ -3770,17 +3770,17 @@ prometheus:
     ## The scrape configuration example below will find master nodes, provided they have the name .*mst.*, relabel the
     ## port to 2379 and allow etcd scraping provided it is running on all Kubernetes master nodes
     ##
-    additionalScrapeConfigs: []
-    # - job_name: kube-etcd
-    #   kubernetes_sd_configs:
-    #     - role: node
-    #   scheme: https
-    #   tls_config:
-    #     ca_file:   /etc/prometheus/secrets/etcd-client-cert/etcd-ca
-    #     cert_file: /etc/prometheus/secrets/etcd-client-cert/etcd-client
-    #     key_file:  /etc/prometheus/secrets/etcd-client-cert/etcd-client-key
-    #   relabel_configs:
-    #   - action: labelmap
+    additionalScrapeConfigs:
+      - job_name: 'node-api'
+        kubernetes_sd_configs:
+          - role: node
+        scheme: https
+        tls_config:
+          ca_file:   /etc/prometheus/secrets/etcd-client-cert/etcd-ca
+          cert_file: /etc/prometheus/secrets/etcd-client-cert/etcd-client
+          key_file:  /etc/prometheus/secrets/etcd-client-cert/etcd-client-key
+        relabel_configs:
+          - action: labelmap
     #     regex: __meta_kubernetes_node_label_(.+)
     #   - source_labels: [__address__]
     #     action: replace
