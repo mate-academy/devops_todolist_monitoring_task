@@ -6,9 +6,15 @@ from lists.models import Todo, TodoList
 
 from django.http import HttpResponse
 from django.utils import timezone
+from prometheus_client import Counter, generate_latest
+
 import time
 
 startup_time = timezone.now()
+
+# Prometheus counters for tracking GET and POST requests
+get_counter = Counter('http_requests_get_total', 'Total number of GET requests')
+post_counter = Counter('http_requests_post_total', 'Total number of POST requests')
 
 class IsCreatorOrReadOnly(permissions.BasePermission):
     """
@@ -74,3 +80,12 @@ def ready(request):
     else:
         # After 30 seconds, return HTTP 200
         return HttpResponse("Readiness OK", content_type="text/plain")
+
+# Metrics endpoint to track GET and POST requests
+def metrics(request):
+    if request.method == 'GET':
+        get_counter.inc()
+    elif request.method == 'POST':
+        post_counter.inc()
+
+    return HttpResponse(generate_latest(), content_type='text/plain; version=0.0.4')
