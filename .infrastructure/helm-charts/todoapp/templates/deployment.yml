@@ -20,7 +20,7 @@ spec:
       serviceAccountName: secrets-reader
       containers:
       - name: todoapp
-        image: dsvyrydoff/todoapp:5.0.0
+        image: dsvyrydoff/todoapp:5.1.0
         volumeMounts:
         - name: data
           mountPath: /app/data

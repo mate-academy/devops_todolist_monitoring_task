@@ -27,7 +27,7 @@ todoapp:
 image:
   todoapp:
     repository: dsvyrydoff/todoapp
-    tag: "5.0.0"
+    tag: "5.1.0"
 
 hpa:
   todoapp:
@@ -49,6 +49,6 @@ serviceAccount: todoapp
 serviceMonitor:
          enabled: true
          labels: {}
-         interval: 10s
-         path: /metrics
-         port: http
+         interval: "10s"
+         path: "/api/metrics"
+         port: "http"
