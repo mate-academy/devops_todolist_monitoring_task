@@ -74,3 +74,18 @@ def ready(request):
     else:
         # After 30 seconds, return HTTP 200
         return HttpResponse("Readiness OK", content_type="text/plain")
+
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
+
+# Оголошення лічильників для GET і POST запитів
+get_counter = Counter('http_get_requests_total', 'Total number of GET requests')
+post_counter = Counter('http_post_requests_total', 'Total number of POST requests')
+
+def metrics(request):
+    if request.method == 'GET':
+        get_counter.inc()
+    elif request.method == 'POST':
+        post_counter.inc()
+
+    # Повернення метрик у форматі Prometheus
+    return HttpResponse(generate_latest(), content_type=CONTENT_TYPE_LATEST)

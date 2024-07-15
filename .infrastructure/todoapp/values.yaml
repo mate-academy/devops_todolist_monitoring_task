@@ -1,0 +1,6 @@
+# serviceMonitor:
+#   enabled: true
+#   labels: {}
+#   interval: 10s
+#   path: /metrics
+#   port: http
