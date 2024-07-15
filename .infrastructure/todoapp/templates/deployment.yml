@@ -20,7 +20,7 @@ spec:
       serviceAccountName: secrets-reader
       containers:
       - name: todoapp
-        image: ikulyk404/todoapp:4.0.1
+        image: yegorv/todoapp:metrics_v2
         volumeMounts:
         - name: data
           mountPath: /app/data

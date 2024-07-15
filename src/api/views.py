@@ -74,3 +74,8 @@ def ready(request):
     else:
         # After 30 seconds, return HTTP 200
         return HttpResponse("Readiness OK", content_type="text/plain")
+
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+
+def metrics(request):
+    return HttpResponse(generate_latest(), content_type=CONTENT_TYPE_LATEST)
