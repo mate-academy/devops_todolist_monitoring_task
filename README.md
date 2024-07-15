@@ -112,3 +112,69 @@ Follow the steps below to complete the task:
     - Utilize Grafana’s functions for formatting the display.
 
 14. Submit a PR with your changes and attach screenshots of your Grafana dashboard for validation on the specified platform.
+
+
+---
+
+# SOLUTION
+
+### Edit the docker image
+
+1. insert prometheus library in requirements.txt
+2. in order to scrape GET/POST requests counter from entire app
+
+    we needed to: 
+
+    * create new middleware `metrics_middleware.py` and insert it in the `todolist.settings.MIDDLEWARE`
+    * create new view `metrics` in `api.views`
+    * add new endpoint in `todolist.urls`
+3. build new docker image
+4. tag and push to docker hub
+
+### Create Prometheus helm chart
+
+use `prometheus-community/kube-prometheus-stack`
+
+1. add helm repo with `prometheus-community/kube-prometheus-stack`
+2. update helm repo
+3. install prometheus stack with default settings
+
+### Create the app helm chart
+
+1. Create the todoapp helm chart
+2. Create the mysql subchart
+3. add mysql dependancy in todoapp/chart.yaml
+4. clean both values.yml files as template value referances creation is not our task
+5. copy manifest in relative templates directories
+6. change the image in deployment.yml for the one pushed to the docker hub
+7. create servicemonitor.yml file to set metrics scraping
+
+    1. Отримаємо `serviceMonitorSelector`
+
+        виведемо конфігурацію Prometheus
+
+        ```sh
+        kubectl get prometheuses.monitoring.coreos.com -o yaml
+        ```
+
+        -> `release: prometheus`  (use it as label) in serviceMonitor
+    2. Add directives for label, endpoint, namespace
+8. modify existing ClusterIP service (since it is responsible for inter-cluster communication) to set proper link of Prometheus_ServiceMonitor to the App pods
+
+    add matching label and port name as stated in Servicemonitor
+9. install helm chart
+10. apply the ingress controller in order to have straight-forward access to our app via localhost
+
+     ```sh
+     kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+     ```
+
+### Verify all works / Create Grafana dashboard
+
+1. enter the app and create few lists to make some POST requests
+2. verify the metrics endpoint `localhost/metrics`
+
+    get names for the metrics we need to apply in grafana
+3. port-forward Prometheus & Grafana
+4. Verify the presence of the todoapp pods as UP targets
+5. create Grafana dashboard
