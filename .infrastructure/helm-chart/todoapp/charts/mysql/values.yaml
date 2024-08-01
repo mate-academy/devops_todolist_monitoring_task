@@ -1,0 +1,38 @@
+mysql:
+  service:
+    ports:
+      name: mysql
+      port: 3306
+    clusterIP: None
+
+  namespace: mysql
+
+  secrets:
+    MYSQL_ROOT_PASSWORD: "1234"
+    MYSQL_USER: "app_user"
+    MYSQL_PASSWORD: "1234"
+
+  statefulSet:
+    replicas: 2
+    name: mysql
+    repository: mysql
+    version: 8.0
+    storage: 2Gi
+
+    resources:
+        cpu: 500m
+        memory: 1Gi
+
+    affinity:
+      podAntiAffinity:
+          key: "app"
+          values: mysql
+      nodeAffinity:
+        key: "app"
+        values: "mysql"
+
+    tolerations:
+    - key: "app"
+      operator: "Equal"
+      value: "mysql"
+      effect: "NoSchedule"
