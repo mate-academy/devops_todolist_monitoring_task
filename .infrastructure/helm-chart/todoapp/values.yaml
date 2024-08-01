@@ -1,0 +1,49 @@
+common:
+  namespace: todoapp
+
+todoapp:
+  image:
+    name: todoapp
+    repository: ikulyk404/todoapp
+    version: 4.0.1
+
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+
+  configs:
+    PYTHONUNBUFFERED: "1"
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "150m"
+    limits:
+      memory: "256Mi"
+      cpu: "150m"
+
+  affinity:
+    nodeAffinity:
+      key: app
+      values: kube2py
+
+  hpa:
+    minReplicas: 2
+    maxReplicas: 5
+    cpu:
+      averageUtilization: 70
+    memory:
+      averageUtilization: 70
+
+  secrets:
+    SECRET_KEY: "QGUyKHl4KXYmdGdoM19zPTB5amEtaSFkcGVieHN6XmRnNDd4KS1rJmtxXzN6Zio5ZSoK(@e2(yx)v&tgh3_s=0yja-i!dpebxsz^dg47x)-k&kq_3zf*9e*)"
+    DB_NAME: "app_db"
+    DB_USER: "app_user"
+    DB_PASSWORD: "1234"
+    DB_HOST: "mysql-0.mysql.mysql.svc.cluster.local"
+
+  pv:
+    storage: 1Gi
+
+  pvc:
+    storage: 1Gi
