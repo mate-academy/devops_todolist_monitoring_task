@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Values.todoapp.namespace.name }}
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .Values.todoapp.rollingUpdate.maxSurge }}
+      maxUnavailable: {{ .Values.todoapp.rollingUpdate.maxUnavailable }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      serviceAccountName: {{ .Values.todoapp.serviceAccount.name }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ .Values.todoapp.containers.repository }}:{{ .Values.todoapp.containers.version }}
+        volumeMounts:
+        - name: data
+          mountPath: /app/data
+        - name: app-secrets-volume
+          mountPath: "/app/secrets"
+          readOnly: true
+        - name: app-config-volume
+          mountPath: "/app/configs"
+          readOnly: true
+        resources:
+          requests:
+            memory: {{ .Values.todoapp.resources.requests.memory }}
+            cpu: {{ .Values.todoapp.resources.requests.cpu }}
+          limits:
+            memory: {{ .Values.todoapp.resources.limits.memory }}
+            cpu: {{ .Values.todoapp.resources.limits.cpu }}
+        env:
+        {{- range $k, $v := .Values.todoapp.secrets }}
+        - name: {{ $k }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ $.Chart.Name }}-secret
+              key: {{ $k }}
+        {{- end }}
+        - name: PYTHONUNBUFFERED
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Chart.Name }}-config
+              key: PYTHONUNBUFFERED
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: api/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: api/ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: pvc-data
+      - name: app-secrets-volume
+        secret:
+          secretName: {{ .Chart.Name }}-secret
+      - name: app-config-volume
+        configMap:
+          name: {{ .Chart.Name }}-config
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: {{ .Values.todoapp.affinity.key }}
+                operator: In
+                values:
+                {{- range .Values.todoapp.affinity.values }}
+                  - {{ . }}
+                {{- end }}
