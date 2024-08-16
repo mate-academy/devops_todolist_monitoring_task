@@ -3,11 +3,14 @@ kind: Service
 metadata:
   name: todoapp-service
   namespace: todoapp
+  labels:
+    app: todoapp
 spec:
   type: ClusterIP
   selector:
     app: todoapp
   ports:
-  - protocol: TCP
+  - name: web
+    protocol: TCP
     port: 80
     targetPort: 8080
