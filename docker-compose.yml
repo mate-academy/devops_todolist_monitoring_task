@@ -1,0 +1,63 @@
+  version: '3.8'
+  networks:
+    monitoring:
+      driver: bridge
+
+  volumes:
+    prometheus_data: {}
+    grafana-data: {}
+  services:
+    # todoapp:
+    #   image: fredfredburger/todoapp:5.0.1
+    #   container_name: todoapp-local
+    #   restart: unless-stopped
+    #   ports:
+    #     - "8080:8080"
+    #   environment:
+    #     - SECRET_KEY=@e2(yx)v&tgh3_s=0yja-i!dpebxsz^dg47x)-k&kq_3zf*9e*
+    #     - DB_NAME=app_db
+    #     - DB_USER=app_user
+    #     - DB_PASSWORD=1234
+    #     - DB_HOST=mysql-local
+    #     - DBB_HOST="mysql-0.mysql.mysql.svc.cluster.local"
+    prometheus:
+      image: prom/prometheus:latest
+      container_name: prometheus
+      restart: unless-stopped
+      volumes:
+        - ./prometheus.yml:/etc/prometheus/prometheus.yml
+        - prometheus_data:/prometheus
+      command:
+        - '--config.file=/etc/prometheus/prometheus.yml'
+        - '--storage.tsdb.path=/prometheus'
+        - '--web.console.libraries=/etc/prometheus/console_libraries'
+        - '--web.console.templates=/etc/prometheus/consoles'
+        - '--web.enable-lifecycle'
+      ports:
+        - 9090:9090
+      networks:
+        - monitoring
+
+    grafana:
+      image: grafana/grafana-oss:latest
+      container_name: grafana
+      ports:
+        - '3000:3000'
+      volumes:
+        - grafana-data:/var/lib/grafana
+      restart: unless-stopped
+      networks:
+        - monitoring
+
+    mysql:
+      image: fredfredburger/mysql-local:1.1.0
+
+      container_name: mysql-local
+      ports:
+        - "3306:3306"
+
+      environment:
+        - MYSQL_ROOT_PASSWORD=1234
+        - MYSQL_DATABASE=app_db
+        - MYSQL_USER=app_user
+        - MYSQL_PASSWORD=1234

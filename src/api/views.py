@@ -1,15 +1,20 @@
 from django.contrib.auth.models import User
 from rest_framework import permissions, viewsets
-
+from prometheus_client import Counter
 from api.serializers import TodoListSerializer, TodoSerializer, UserSerializer
 from lists.models import Todo, TodoList
-
+from django.http import JsonResponse
 from django.http import HttpResponse
 from django.utils import timezone
 import time
 
 startup_time = timezone.now()
 
+requests_total = Counter(
+   name="app_requests_total",
+   documentation="Total number of various requests.",
+
+)
 class IsCreatorOrReadOnly(permissions.BasePermission):
     """
     Object-level permission to only allow owners of an object to edit it.
@@ -31,19 +36,19 @@ class IsCreatorOrReadOnly(permissions.BasePermission):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAdminUser,)
 
 
 class TodoListViewSet(viewsets.ModelViewSet):
-
     queryset = TodoList.objects.all()
     serializer_class = TodoListSerializer
     permission_classes = (IsCreatorOrReadOnly,)
 
     def perform_create(self, serializer):
+        requests_total.inc()
+
         user = self.request.user
         creator = user if user.is_authenticated else None
         serializer.save(creator=creator)
@@ -56,16 +61,20 @@ class TodoViewSet(viewsets.ModelViewSet):
     permission_classes = (IsCreatorOrReadOnly,)
 
     def perform_create(self, serializer):
+        requests_total.inc()
+
         user = self.request.user
         creator = user if user.is_authenticated else None
         serializer.save(creator=creator)
 
 # Health Check View
 def health(request):
+    requests_total.inc()
     return HttpResponse("Health OK", content_type="text/plain")
 
 # Readiness Check View
 def ready(request):
+    requests_total.inc()
     # Calculate elapsed time since startup
     elapsed_time = timezone.now() - startup_time
     if elapsed_time.total_seconds() < 30:
@@ -74,3 +83,30 @@ def ready(request):
     else:
         # After 30 seconds, return HTTP 200
         return HttpResponse("Readiness OK", content_type="text/plain")
+
+def metrics(request):
+
+    total_requests = requests_total._value.get()
+
+    collected_metrics = requests_total.collect()
+
+    # Prepare a response
+    metrics_data = {
+        'total_requests': total_requests,
+        'metrics': [
+            {
+                'name': metric.name,
+                'help': metric.documentation,
+
+                'samples': [
+                    {
+                        'value': sample.value,
+
+                    } for sample in metric.samples
+                ]
+            }
+            for metric in collected_metrics
+        ]
+    }
+
+    return JsonResponse(metrics_data)

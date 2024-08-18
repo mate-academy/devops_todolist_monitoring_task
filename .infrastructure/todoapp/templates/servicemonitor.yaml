@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: todoapp-servicemonitor
+  namespace: todoapp
+  labels:
+    app: todoapp
+    release: todoapp
+spec:
+  selector:
+    matchLabels:
+      app: todoapp
+  namespaceSelector:
+    matchNames:
+    - todoapp
+  endpoints:
+    - port: web
+      path: /prometheus/metrics
+      interval: 30s
