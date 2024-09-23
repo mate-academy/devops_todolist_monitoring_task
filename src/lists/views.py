@@ -1,19 +1,37 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from prometheus_client import Counter, generate_latest
 
 from lists.forms import TodoForm, TodoListForm
 from lists.models import Todo, TodoList
 
+# Лічильники для GET і POST запитів
+REQUEST_GET_COUNT = Counter('http_get_requests_total', 'Total number of GET requests')
+REQUEST_POST_COUNT = Counter('http_post_requests_total', 'Total number of POST requests')
+
+def metrics_view(request):
+    # Підрахунок кількості запитів GET і POST
+    if request.method == 'GET':
+        REQUEST_GET_COUNT.inc()
+    elif request.method == 'POST':
+        REQUEST_POST_COUNT.inc()
+
+    # Повернення метрик у форматі Prometheus
+    return HttpResponse(generate_latest(), content_type='text/plain')
+
 
 def index(request):
+    if request.method == 'GET':
+        REQUEST_GET_COUNT.inc()  # Підрахунок GET запитів
     return render(request, "lists/index.html", {"form": TodoForm()})
 
 
 def todolist(request, todolist_id):
     todolist = get_object_or_404(TodoList, pk=todolist_id)
     if request.method == "POST":
-        redirect("lists:add_todo", todolist_id=todolist_id)
+        REQUEST_POST_COUNT.inc()  # Підрахунок POST запитів
+        return redirect("lists:add_todo", todolist_id=todolist_id)
 
     return render(
         request, "lists/todolist.html", {"todolist": todolist, "form": TodoForm()}
@@ -22,6 +40,7 @@ def todolist(request, todolist_id):
 
 def add_todo(request, todolist_id):
     if request.method == "POST":
+        REQUEST_POST_COUNT.inc()  # Підрахунок POST запитів
         form = TodoForm(request.POST)
         if form.is_valid():
             user = request.user if request.user.is_authenticated else None
@@ -40,13 +59,17 @@ def add_todo(request, todolist_id):
 
 @login_required
 def overview(request):
+    if request.method == 'GET':
+        REQUEST_GET_COUNT.inc()  # Підрахунок GET запитів
     if request.method == "POST":
+        REQUEST_POST_COUNT.inc()  # Підрахунок POST запитів
         return redirect("lists:add_todolist")
     return render(request, "lists/overview.html", {"form": TodoListForm()})
 
 
 def new_todolist(request):
     if request.method == "POST":
+        REQUEST_POST_COUNT.inc()  # Підрахунок POST запитів
         form = TodoForm(request.POST)
         if form.is_valid():
             # create default todolist
@@ -68,6 +91,7 @@ def new_todolist(request):
 
 def add_todolist(request):
     if request.method == "POST":
+        REQUEST_POST_COUNT.inc()  # Підрахунок POST запитів
         form = TodoListForm(request.POST)
         if form.is_valid():
             user = request.user if request.user.is_authenticated else None

@@ -1,0 +1,113 @@
+replicaCount: 1
+
+image:
+  repository: shcherbanvasyl499/todolist-web
+  pullPolicy: IfNotPresent
+  tag: latest
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 3
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+# MySQL settings
+mysql:
+  auth:
+    rootPassword: "8262"  # Use string format for the password
+    username: vr89
+    password: "8262"
+    database: todoapp
+  primary:
+    service:
+      type: ClusterIP
+
+# Environment variables for the application
+env:
+  DB_HOST: todolist-mysql.default.svc.cluster.local  # Update this to the correct MySQL service name
+  DB_USER: vr89
+  DB_PASSWORD: 
+    secretKeyRef:
+      name: mysql-secret
+      key: DB_PASSWORD
+  DB_NAME: todoapp
+
+
+volumes: []
+
+volumeMounts: []
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Adding ServiceMonitor configuration
+serviceMonitor:
+  enabled: true
+  labels:
+    app: todoapp
+  interval: 10s
+  path: /metrics
+  port: http

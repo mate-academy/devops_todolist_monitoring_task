@@ -1,0 +1,7 @@
+apiVersion: v2
+name: todoapp
+version: 0.1.0
+dependencies:
+  - name: mysql
+    version: "11.1.17"
+    repository: "https://charts.bitnami.com/bitnami"

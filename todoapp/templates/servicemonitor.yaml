@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: todoapp-servicemonitor
+  namespace: default
+  labels:
+    app: todoapp
+    release: kube-prometheus-stack
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: todoapp
+    app.kubernetes.io/name: todoapp
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: todoapp
+      app.kubernetes.io/name: todoapp
+  namespaceSelector:
+    matchNames:
+      - default
+  endpoints:
+    - interval: 10s
+      path: /metrics
+      port: http-metrics

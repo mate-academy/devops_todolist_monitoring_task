@@ -3,4 +3,5 @@ Django==4.1.10
 djangorestframework==3.13.1
 pytz==2022.1
 sqlparse==0.4.4
-mysql-connector-python==8.2.0
+mysqlclient==2.1.1  # Updated to use mysqlclient instead of mysql-connector-python
+prometheus_client==0.16.0

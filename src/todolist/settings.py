@@ -8,27 +8,25 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", "")
+SECRET_KEY = os.environ.get("SECRET_KEY", "your-fallback-secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Application definition
-
 INSTALLED_APPS = (
     "django.contrib.admin",
     "django.contrib.auth",
@@ -57,60 +55,45 @@ ROOT_URLCONF = "todolist.urls"
 
 WSGI_APPLICATION = "todolist.wsgi.application"
 
-
-# Database
-# https://docs.djangoproject.com/en/1.7/ref/settings/#databases
-
-DB_NAME = os.environ.get("DB_NAME", "")
-DB_USER = os.environ.get("DB_USER", "")
-DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
-DB_HOST = os.environ.get("DB_HOST", "")
+# Database configuration
+# Using environment variables to set up database credentials
+import os
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql.connector.django',
-        'NAME': DB_NAME,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASSWORD,
-        'HOST': DB_HOST,  # You can use a different host if your MySQL server is on a remote machine.
-        'PORT': '',  # Leave this empty to use the default MySQL port (3306).
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME', 'todoapp'),
+        'USER': os.getenv('DB_USER', 'vr89'),
+        'PASSWORD': os.getenv('DB_PASSWORD', '8262'),
+        'HOST': os.getenv('DB_HOST', 'todolist-mysql.default.svc.cluster.local'),
+        'PORT': '3306',
     }
 }
 
+
+
 # Internationalization
-# https://docs.djangoproject.com/en/1.7/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.7/howto/static-files/
-
 STATIC_URL = "/static/"
 
-
 # Login settings
-
 LOGIN_URL = "/auth/login/"
-
 LOGOUT_URL = "/auth/logout/"
 
-
-# rest (api) framework
+# Django REST framework
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
     ]
 }
 
+# Templates configuration
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -121,7 +104,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.request",
             ],
-            "debug": True,
+            "debug": DEBUG,
         },
     },
 ]
