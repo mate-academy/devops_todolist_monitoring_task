@@ -1,0 +1,40 @@
+namespace: mysql
+
+mysql:
+  secrets:
+    MYSQL_ROOT_PASSWORD: "1234"
+    MYSQL_USER: "app_user"
+    MYSQL_PASSWORD: "1234"
+    MYSQL_DATABASE: "app_db"
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+  rollingUpdate:
+    maxUnavailable: 25%
+    maxSurge: 25%
+  affinity:
+    podAntiAffinity:
+      key: "app"
+      values: "mysql"
+    nodeAffinity:
+      key: "app"
+      values: "mysql"
+image:
+  mysql:
+    repository: mysql
+    tag: "8.0"
+hpa:
+  mysql:
+    minReplicas: 2
+    maxReplicas: 10
+    cpuUtilization: 50
+    memoryUtilization: 70
+persistentVolume:
+  capacity: "1Gi"
+persistentVolumeClaim:
+  storage: "2Gi"
+serviceAccount: mysql

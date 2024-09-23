@@ -4,6 +4,7 @@ from rest_framework import permissions, viewsets
 from api.serializers import TodoListSerializer, TodoSerializer, UserSerializer
 from lists.models import Todo, TodoList
 
+from prometheus_client import Counter, generate_latest
 from django.http import HttpResponse
 from django.utils import timezone
 import time
