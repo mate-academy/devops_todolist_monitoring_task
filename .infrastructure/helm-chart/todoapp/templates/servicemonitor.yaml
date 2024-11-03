@@ -1,0 +1,22 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Chart.Name }}-service-monitor
+  namespace: {{ .Values.todoapp.serviceMonitor.namespace }}
+  labels:
+  {{- range $k, $v := .Values.todoapp.serviceMonitor.labels }}
+    {{ $k }}: {{ $v }}
+  {{- end }}
+spec:
+  jobLabel: job
+  endpoints:
+    - interval: {{ .Values.todoapp.serviceMonitor.interval }}
+      path: {{ .Values.todoapp.serviceMonitor.path }}
+      port: {{ .Values.todoapp.serviceMonitor.port }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Chart.Name }}
+

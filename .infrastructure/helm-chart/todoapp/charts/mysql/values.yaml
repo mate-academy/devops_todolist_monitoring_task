@@ -1,0 +1,38 @@
+mysql:
+
+  namespace: mysql
+
+  secrets:
+    data:
+      MYSQL_ROOT_PASSWORD: "MTIzNA==" # Base64 encoding for "1234"
+      MYSQL_USER: "YXBwX3VzZXI=" # Base64 encoding for "app_user"
+      MYSQL_PASSWORD: "MTIzNA==" # Base64 encoding for "1234"
+      MYSQL_DATABASE: "YXBwX2RiCg==" # Base64 encoding for "app_db"
+
+  image:
+    name: mysql
+    repository: mysql
+    version: "8.0"
+
+  replicas: 2
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1
+      memory: 2Gi
+
+  volumeClaimTemplates:
+    resources:
+      requests:
+        storage: 2Gi
+
+  affinity:
+    podAffinity:
+      key: "app"
+      value: "mysql"
+    nodeAffinity:
+      key: "app"
+      value: "mysql"

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-data
+  namespace: {{ .Values.todoapp.namespace }}
+spec:
+  storageClassName: standard
+  persistentVolumeReclaimPolicy: Delete
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: {{ .Values.todoapp.pv.capacity.storage }}
+  hostPath:
+    path: /data/
+
