@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Chart.Name }}-stateful-set
+  namespace: {{ .Values.common.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.mysql.labelName }}
+  replicas: {{ .Values.statefulSet.replicas }}
+  serviceName: {{ .Chart.Name }}-service
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.mysql.labelName }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}-container
+        image: {{ .Values.mysql.image.name }}:{{ .Values.mysql.image.tag }}
+        env:
+        {{- range $k, $v := .Values.secret }}
+        - name: {{ $k }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ $.Chart.Name }}-secret
+              key: {{ $k }}
+        {{- end }}
+        ports:
+        - name: mysql
+          containerPort: 3306
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/mysql
+          subPath: mysql
+        - name: config-map
+          mountPath: /docker-entrypoint-initdb.d
+        - name: my-cnf
+          mountPath: /etc/my.cnf
+          subPath: my.cnf
+        resources:
+          requests:
+            cpu: {{ .Values.statefulSet.resources.requests.cpu }}
+            memory: {{ .Values.statefulSet.resources.requests.memory }}
+        livenessProbe:
+          exec:
+            command: ["mysqladmin", "ping"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          exec:
+            command: ["mysqladmin", "ping"]
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 1
+      volumes:
+      - name: config-map
+        configMap:
+          name: {{ .Chart.Name }}-config
+      - name: my-cnf
+        configMap:
+          name: my-cnf-config
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: {{ .Values.statefulSet.volumeClaimTemplates.requests.storage }}

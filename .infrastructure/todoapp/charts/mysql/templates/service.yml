@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-service
+  namespace: {{ .Values.common.namespace }}
+spec:
+  selector:
+    app: {{ .Values.mysql.labelName }}
+  ports:
+  - name: mysql
+    port: 3306
+  clusterIP: None
+
+# pod-name.service-name.namespace.svc.cluster.local
+# pod-name.service-name
+# mysql-0.mysql.mysql.svc.cluster.local
