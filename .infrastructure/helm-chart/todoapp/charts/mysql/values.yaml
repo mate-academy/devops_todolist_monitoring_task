@@ -1,0 +1,36 @@
+mysql:
+  namespace: mysql
+
+  secret:
+    MYSQL_ROOT_PASSWORD: "MTIzNA==" # Base64 encoding for "1234"
+    MYSQL_USER: "YXBwX3VzZXI=" # Base64 encoding for "app_user"
+    MYSQL_PASSWORD: "MTIzNA==" # Base64 encoding for "1234"
+
+  replicas: 2
+
+  image:
+    repository: mysql
+    tag: 8.0
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+  pvcStorageRequest: 2Gi
+
+  tolerations:
+    key: "app"
+    operator: "Equal"
+    value: "mysql"
+    effect: "NoSchedule"
+
+  affinities:
+    podAntiAffinity:
+      key: "app"
+      operator: In
+      values: "mysql"
+    nodeAffinity:
+      key: "app"
+      operator: In
+      values: "mysql"
