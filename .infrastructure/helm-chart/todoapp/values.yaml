@@ -1,0 +1,55 @@
+todoapp:
+  namespace: todoapp
+
+  secrets:
+    SECRET_KEY: QGUyKHl4KXYmdGdoM19zPTB5amEtaSFkcGVieHN6XmRnNDd4KS1rJmtxXzN6Zio5ZSoK
+    DB_NAME: "YXBwX2RiCg=="
+    DB_USER: "YXBwX3VzZXI="
+    DB_PASSWORD: "MTIzNA=="
+    DB_HOST: "bXlzcWwtMC5teXNxbC5teXNxbC5zdmMuY2x1c3Rlci5sb2NhbAo="
+
+  resources:
+    requests:
+      cpu: "150m"
+      memory: "256Mi"
+    limits:
+      cpu: "150m"
+      memory: "256Mi"
+
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+
+  image:
+    repository: levandrii1/todoapp
+    tag: 5.0.6
+
+  nodeAffinity:
+    weight: 1
+    key: app
+    operator: In
+    values: kube2py
+
+  hpa:
+    minReplicas: 2
+    maxReplicas: 5
+    resourceAvgUtilization:
+      cpu: 70
+      memory: 70
+
+  pvStorageCap: 1Gi
+
+  pvcStorageRequest: 1Gi
+
+  RBAC:
+    name: secrets-reader
+
+  serviceMonitor:
+    enabled: true
+    labels:
+      app: todoapp
+      release: kube-prometheus-stack
+    interval: 10s
+    path: /metrics
+    port: http
+    namespace: default
