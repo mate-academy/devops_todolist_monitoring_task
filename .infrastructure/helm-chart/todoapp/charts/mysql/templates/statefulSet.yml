@@ -1,0 +1,90 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Values.common.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  replicas: {{ .Values.mysql.replicas.qty }}
+  serviceName: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      containers:
+      - name: {{ .Values.mysql.containers.name}}
+        image: {{ .Values.mysql.containers.repository }}:{{ .Values.mysql.containers.tag }}
+        env:
+        {{- range $k, $v := .Values.mysql.secrets }}
+        - name: {{ $k }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ $.Chart.Name }}-secrets
+              key: {{ $k }}
+        {{- end }}
+        - name: MYSQL_DATABASE
+          value: app_db
+        ports:
+        - name: mysql
+          containerPort: 3306
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/mysql
+          subPath: mysql
+        - name: config-map
+          mountPath: /docker-entrypoint-initdb.d
+        resources:
+          requests:
+            cpu: {{ .Values.mysql.resources.requests.cpu }}
+            memory: {{ .Values.mysql.resources.requests.memory }}
+        livenessProbe:
+          exec:
+            command: ["mysqladmin", "ping"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          exec:
+            command: ["mysqladmin", "ping"]
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 1
+      volumes:
+      - name: config-map
+        configMap:
+          name: {{ $.Chart.Name }}-configmap
+      tolerations:
+      - key: {{ .Values.mysql.tolerations.key }}
+        operator: {{ .Values.mysql.tolerations.operator }}
+        value: {{ .Values.mysql.tolerations.values }}
+        effect: {{ .Values.mysql.tolerations.effect }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: {{ .Values.mysql.affinity.podAffinity.key }}
+                    operator: {{ .Values.mysql.affinity.podAffinity.operator }}
+                    values:
+                    - {{ .Values.mysql.affinity.podAffinity.values }}
+              topologyKey: "kuubernetes.io/hostname"
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: {{ .Values.mysql.affinity.nodAffinity.key }}
+                    operator: {{ .Values.mysql.affinity.nodAffinity.operator }}
+                    values:
+                    - {{ .Values.mysql.affinity.podAffinity.values }}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: {{ .Values.mysql.pvc.requestsStorage }}
