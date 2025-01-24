@@ -6,9 +6,26 @@ from lists.models import Todo, TodoList
 
 from django.http import HttpResponse
 from django.utils import timezone
+from prometheus_client import Counter, generate_latest
+
 import time
 
 startup_time = timezone.now()
+
+
+GET_COUNTER = Counter("http_requests_get_total", "Total number of HTTP GET requests")
+POST_COUNTER = Counter("http_requests_post_total", "Total number of HTTP POST requests")
+
+
+# Metrics GET POST
+def metrics(request):
+    if request.method == "GET":
+        GET_COUNTER.inc()
+    elif request.method == "POST":
+        POST_COUNTER.inc()
+
+    return HttpResponse(generate_latest(), content_type="text/plain; version=0.0.4; charset=utf-8")
+
 
 class IsCreatorOrReadOnly(permissions.BasePermission):
     """
@@ -60,9 +77,11 @@ class TodoViewSet(viewsets.ModelViewSet):
         creator = user if user.is_authenticated else None
         serializer.save(creator=creator)
 
+
 # Health Check View
 def health(request):
     return HttpResponse("Health OK", content_type="text/plain")
+
 
 # Readiness Check View
 def ready(request):

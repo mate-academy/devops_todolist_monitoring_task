@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Chart.Name }}-clusterip-service
+  namespace: {{ .Values.common.namespace }}
+spec:
+  type: {{ .Values.todoapp.service.type }}
+  selector:
+    app: {{ .Chart.Name }}
+  ports:
+  - protocol: {{ .Values.todoapp.service.ports.protocol }}
+    port: {{ .Values.todoapp.service.ports.port }}
+    targetPort: {{ .Values.todoapp.service.ports.targetPort }}
