@@ -1,0 +1,51 @@
+
+common:
+  namespace: todoapp
+
+serviceAccountName: secrets-reader
+
+secrets:
+  SECRET_KEY: SyperSecretKey
+  DB_NAME: SuperDbName
+  DB_USER: SuperDbUser
+  DB_PASSWORD: SupecDbPassword
+  DB_HOST: SuperDbHost
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "150m"
+  limits:
+    memory: "256Mi"
+    cpu: "150m"
+
+rollingUpdate:
+  maxSurge: 1
+  maxUnavailable: 1
+
+image:
+  repository: ikulyk404/todoapp
+  version: 4.0.1
+
+nodeAffinity:
+  key: "app"
+  values:
+    - todoapp
+
+hpa:
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    cpu:
+      averageUtilization: 70
+    memory:
+      averageUtilization: 70
+
+pv:
+  capacity:
+    storage: 1Gi
+
+pvc:
+  resources:
+    requests:
+      storage: 1Gi

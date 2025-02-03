@@ -1,10 +1,16 @@
 from django.contrib.auth.decorators import login_required
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from lists.forms import TodoForm, TodoListForm
 from lists.models import Todo, TodoList
 
+REQUEST_COUNT = Counter("http_requests_total", "Total HTTP Requests", ["method"])
+
+def metrics(request):
+    REQUEST_COUNT.labels(method=request.method).inc()
+    return HttpResponse(generate_latest(), content_type=CONTENT_TYPE_LATEST)
 
 def index(request):
     return render(request, "lists/index.html", {"form": TodoForm()})
