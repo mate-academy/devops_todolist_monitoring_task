@@ -1,0 +1,68 @@
+common:
+  namespace: todoapp
+
+todoapp:
+  image:
+    name: todoapp
+    repository: rozdorozhnii/todoapp
+    version: 4.1.0
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "150m"
+    limits:
+      memory: "256Mi"
+      cpu: "150m"
+
+  secrets:
+    SECRET_KEY: QGUyKHl4KXYmdGdoM19zPTB5amEtaSFkcGVieHN6XmRnNDd4KS1rJmtxXzN6Zio5ZSoK
+    db:
+      DB_NAME: "app_db"
+      DB_USER: "app_user"
+      DB_PASSWORD: "1234"
+      DB_HOST: "mysql-0.mysql.mysql.svc.cluster.local"
+
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 70
+
+  updateStrategy:
+    type: RollingUpdate
+    maxSurge: 1
+    maxUnavailable: 1
+
+  nodeAffinityConfig:
+    weight: 1
+    key: app
+    operator: In
+    values: todoapp
+
+  service:
+    type: ClusterIP
+    ports:
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: kube-prometheus-stack
+      app: todoapp
+    interval: 10s
+    path: /metrics
+    port: http
+    namespace: default
+
+  pv:
+    capacity:
+      storage: 1Gi
+
+  pvc:
+    resources:
+      requests:
+        storage: 1Gi

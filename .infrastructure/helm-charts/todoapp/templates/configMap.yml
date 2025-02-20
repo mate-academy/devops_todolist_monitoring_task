@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-configmap
+  namespace: {{ .Values.common.namespace }}
+data:
+  PYTHONUNBUFFERED: "1"
