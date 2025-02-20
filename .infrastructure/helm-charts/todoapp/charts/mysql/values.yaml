@@ -1,0 +1,39 @@
+common:
+  namespace: mysql
+
+mysql:
+  image:
+    name: mysql
+    repository: mysql
+    version: 8.0
+
+  statefulSetReplicas: 2
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+  secrets:
+    MYSQL_ROOT_PASSWORD: "1234" # Base64 decoding for "MTIzNA=="
+    MYSQL_USER: "app_user" # Base64 decoding for "YXBwX3VzZXI="
+    MYSQL_PASSWORD: "1234" # Base64 decoding for "MTIzNA=="
+
+  pvc:
+    requestsStorage: 2Gi
+
+  tolerations:
+    key: "app"
+    operator: "Equal"
+    value: "mysql"
+    effect: "NoSchedule"
+
+  affinity:
+    podAntiAffinity:
+      key: app
+      operator: In
+      values: mysql
+    nodeAffinity:
+      key: app
+      operator: In
+      values: mysql
