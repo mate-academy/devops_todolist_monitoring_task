@@ -1,0 +1,6 @@
+**/.env
+.venv/
+.infrastructure/
+src/
+.python-version
+README.md
