@@ -1,8 +1,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: todoapp-ingress
-  namespace: todoapp
+  name: {{ .Chart.Name }}-ingress
+  namespace: {{ .Values.todoapp.namespace }}
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
@@ -13,6 +13,6 @@ spec:
         path: /(|$)(.*)
         backend:
           service:
-            name: todoapp-service
+            name: {{ .Chart.Name }}-service
             port:
               number: 80

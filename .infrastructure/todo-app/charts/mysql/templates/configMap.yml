@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: mysql
-  namespace: mysql
+  name: {{ .Chart.Name }}-configs
+  namespace: {{ .Values.mysql.namespace }}
   labels:
-    app: mysql
+    app: {{ .Chart.Name }}-app
 data:
   init.sql: |
     GRANT ALL PRIVILEGES ON app_db.* TO 'app_user'@'%';

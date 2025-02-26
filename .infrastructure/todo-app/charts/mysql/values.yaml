@@ -1,0 +1,20 @@
+mysql:
+  namespace: mysql
+
+  secrets:
+    MYSQL_ROOT_PASSWORD: "1234"
+    MYSQL_USER: "app_user"
+    MYSQL_PASSWORD: "1234"
+    MYSQL_DATABASE: "app_db"
+
+  service:
+    portName: mysql-service
+    portNumber: 3306
+
+  storage:
+    request: 2Gi
+
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 500m
