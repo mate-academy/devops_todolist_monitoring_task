@@ -1,6 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-
+from django.urls import path
+from metrics import metrics_view
 from api import views
 
 router = DefaultRouter()
@@ -13,4 +14,5 @@ urlpatterns = [
     path("", include(router.urls)),
     path("health", views.health, name="health"),  # API Health check endpoint
     path("ready", views.ready, name="ready"),
+    path("metrics", metrics_view),
 ]
