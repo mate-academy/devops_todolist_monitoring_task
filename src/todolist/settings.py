@@ -11,7 +11,40 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
+from promlogger import PrometheusLogHandler
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+# Logs for prometheus
+LOGGING = {
+    'version': 1,  # Specifies the logging configuration schema version
+    'disable_existing_loggers': False,  # Keep default Django loggers active
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',  # Use `{}` to format log messages
+        },
+    },
+    'handlers': {
+        'file': {  # Write logs to a file
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'app.log'),  # Log file path
+            'formatter': 'verbose',  # Use the verbose format
+        },
+        'prometheus': {  # Send logs to Prometheus (custom handler)
+            'level': 'INFO',
+            'class': 'my_app.log_handlers.PrometheusLogHandler',  # Our custom handler
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'prometheus'],  # Use both file and Prometheus handlers
+            'level': 'INFO',  # Log everything INFO and above
+            'propagate': True,  # Pass log messages to parent loggers
+        },
+    },
+}
 
 
 # Quick-start development settings - unsuitable for production
