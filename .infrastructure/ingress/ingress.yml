@@ -4,15 +4,38 @@ metadata:
   name: todoapp-ingress
   namespace: todoapp
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - http:
+  - host: todoapp.localhost
+    http:
       paths:
       - pathType: Prefix
-        path: /(|$)(.*)
+        path: /
         backend:
           service:
             name: todoapp-service
             port:
               number: 80
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prom-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: prometheus.localhost
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: kube-prometheus-stack-prometheus
+            port:
+              number: 9090
