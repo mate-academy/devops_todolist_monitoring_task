@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  namespace: todoapp
+  name: {{ .Values.metadata.name }}
+  labels:
+    {{- range $k, $v := .Values.metadata.labels }}
+        {{ $k }}: {{ $v }}
+    {{- end }}
+spec:
+  jobLabel: job
+  endpoints:
+    {{- with .Values.endpoints }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.selector.matchLabels.app }}

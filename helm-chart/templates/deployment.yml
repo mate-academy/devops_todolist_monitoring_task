@@ -20,7 +20,7 @@ spec:
       serviceAccountName: secrets-reader
       containers:
       - name: todoapp
-        image: ikulyk404/todoapp:4.0.1
+        image: trinida/todoapp:2.3.9
         volumeMounts:
         - name: data
           mountPath: /app/data
@@ -33,10 +33,10 @@ spec:
         resources:
           requests:
             memory: "256Mi"
-            cpu: "150m"
+            cpu: "550m"
           limits:
             memory: "256Mi"
-            cpu: "150m"
+            cpu: "600m"
         env:
         - name: PYTHONUNBUFFERED
           valueFrom:
@@ -74,14 +74,14 @@ spec:
           httpGet:
             path: api/health
             port: 8080
-          initialDelaySeconds: 60
-          periodSeconds: 5
+          initialDelaySeconds: 222
+          periodSeconds: 50
         readinessProbe:
           httpGet:
             path: api/ready
             port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 5
+          initialDelaySeconds: 500
+          periodSeconds: 50
       volumes:
       - name: data
         persistentVolumeClaim:
