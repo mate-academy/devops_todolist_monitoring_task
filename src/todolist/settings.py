@@ -41,9 +41,11 @@ INSTALLED_APPS = (
     "accounts",
     "rest_framework",
     "api",
+
 )
 
 MIDDLEWARE = (
+
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
