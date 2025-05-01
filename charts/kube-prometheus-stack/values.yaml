@@ -1,0 +1,31 @@
+# overrides for kube-prometheus-stack
+
+# Вимикаємо admission webhooks (щоб уникнути помилки через nil pointer)
+prometheusOperator:
+  admissionWebhooks:
+    enabled: false
+    deployment:
+      enabled: false
+    patch:
+      enabled: false
+
+# Вимикаємо windowsMonitoring (щоб nil != map error)
+windowsMonitoring:
+  enabled: false
+
+# Дефолтні правила (щоб customRules і additional annotations були мапами)
+defaultRules:
+  additionalRuleGroupAnnotations: {}
+  additionalRuleLabels: {}
+  additionalRuleAnnotations: {}
+
+# Додаємо порожню секцію customRules, щоб dig() не падав на nil
+customRules: {}
+
+# Виправляємо grafana.testFramework.image — воно має бути мапою, а не рядком
+grafana:
+  testFramework:
+    image:
+      registry: docker.io
+      repository: bats/bats
+      tag: v1.4.1
