@@ -1,0 +1,54 @@
+common:
+  namespace: todoapp
+
+todoapp:
+  image:
+    name: "todoapp"
+    repository: "vlad584/django_todo_list"
+    version: "1.0.2"
+    pullPolicy: IfNotPresent
+  hpa:
+    minReplicas: 2
+    maxReplicas: 5
+    cpu:
+      averageUtilization: 70
+    memory:
+      averageUtilization: 70
+  secrets:
+    SECRET_KEY: "@e2(yx)v&tgh3_s=0yja-i!dpebxsz^dg47x)-k&kq_3zf*9e*"
+    DB_NAME: app_db
+    DB_USER: app_user
+    DB_PASSWORD: "1234"
+    DB_HOST: mysql-0.mysql.mysql.svc.cluster.local
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "150m"
+    limits:
+      memory: "256Mi"
+      cpu: "150m"
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+  nodeAffinityParameters:
+    key: app
+    operator: In
+    values:
+      - kube2py
+  pv:
+    capacity:
+      storage: "1Gi"
+  pvc:
+    requests:
+      storage: "1Gi"
+
+service:
+  type: ClusterIP
+  port: 8080
+
+serviceMonitor:
+  enabled: true
+  labels: {}
+  interval: 10s
+  path: /metrics
+  port: http
