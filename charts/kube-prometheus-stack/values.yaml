@@ -1,0 +1,24 @@
+prometheusOperator:
+  admissionWebhooks:
+    enabled: false
+    deployment:
+      enabled: false
+    patch:
+      enabled: false
+
+windowsMonitoring:
+  enabled: false
+
+defaultRules:
+  additionalRuleGroupAnnotations: {}
+  additionalRuleLabels: {}
+  additionalRuleAnnotations: {}
+
+customRules: {}
+
+grafana:
+  testFramework:
+    image:
+      registry: docker.io
+      repository: bats/bats
+      tag: v1.4.1

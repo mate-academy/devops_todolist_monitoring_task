@@ -8,6 +8,16 @@ from django.http import HttpResponse
 from django.utils import timezone
 import time
 
+# Prometheus client imports
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
+
+# Counter for total HTTP requests by method
+REQUEST_COUNT = Counter(
+    'http_requests_total',
+    'Total HTTP requests',
+    ['method']
+)
+
 startup_time = timezone.now()
 
 class IsCreatorOrReadOnly(permissions.BasePermission):
@@ -61,10 +71,12 @@ class TodoViewSet(viewsets.ModelViewSet):
         serializer.save(creator=creator)
 
 # Health Check View
+
 def health(request):
     return HttpResponse("Health OK", content_type="text/plain")
 
 # Readiness Check View
+
 def ready(request):
     # Calculate elapsed time since startup
     elapsed_time = timezone.now() - startup_time
@@ -74,3 +86,11 @@ def ready(request):
     else:
         # After 30 seconds, return HTTP 200
         return HttpResponse("Readiness OK", content_type="text/plain")
+
+# Prometheus metrics endpoint
+
+def metrics(request):
+    # Increment counter for this metrics request
+    REQUEST_COUNT.labels(method=request.method).inc()
+    data = generate_latest()
+    return HttpResponse(data, content_type=CONTENT_TYPE_LATEST)
