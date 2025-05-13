@@ -1,0 +1,9 @@
+common:
+  namespace: mysql
+
+mysql:
+  image:
+    name: mysql
+    repository: mysql
+    version: 8.0
+

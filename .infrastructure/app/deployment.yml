@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: todoapp
-  namespace: todoapp
+  namespace: {{.Values.common.namespace}}
 spec:
   strategy:
     type: RollingUpdate
@@ -101,4 +101,4 @@ spec:
               - key: app
                 operator: In
                 values:
-                - kube2py
+                - todoapp
