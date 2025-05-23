@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{.Chart.Name}}
+  namespace: {{.Values.common.namespace}}
+spec:
+  selector:
+    matchLabels:
+      app: {{.Chart.Name}}
+  replicas: {{.Values.mysql.stateFulSet.replicas}}
+  serviceName: {{.Chart.Name}}
+  template:
+    metadata:
+      labels:
+        app: {{.Chart.Name}}
+    spec:
+      containers:
+      - name: mysql
+        image: {{.Values.mysql.stateFulSet.image.repository}}:{{.Values.mysql.stateFulSet.image.tag}}
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: MYSQL_PASSWORD
+        - name: MYSQL_DATABASE
+          value: app_db
+        ports:
+        - name: {{.Chart.Name}}
+          containerPort: 3306
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/mysql
+          subPath: {{.Chart.Name}}
+        - name: config-map
+          mountPath: /docker-entrypoint-initdb.d
+        resources:
+          requests:
+            cpu: {{.Values.mysql.stateFulSet.resources.requests.cpu}}
+            memory: {{.Values.mysql.stateFulSet.resources.requests.memory}}
+        livenessProbe:
+          exec:
+            command: ["mysqladmin", "ping"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          exec:
+            command: ["mysqladmin", "ping"]
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 1
+      volumes:
+      - name: config-map
+        configMap:
+          name: {{.Chart.Name}}
+      tolerations:
+      - key: {{.Values.mysql.stateFulSet.tolerations.key}}
+        operator: {{.Values.mysql.stateFulSet.tolerations.operator}}
+        value: {{.Values.mysql.stateFulSet.tolerations.value}}
+        effect: {{.Values.mysql.stateFulSet.tolerations.effect}}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: {{.Values.mysql.stateFulSet.affinity.key}}
+                    operator: In
+                    values:
+                    - {{.Values.mysql.stateFulSet.affinity.values}}
+              topologyKey: "kubernetes.io/hostname"
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: {{.Values.mysql.stateFulSet.affinity.key}}
+                    operator: In
+                    values:
+                    - {{.Values.mysql.stateFulSet.affinity.values}}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: {{.Values.mysql.stateFulSet.volumeClaimTemplates.storage}}
