@@ -1,0 +1,4 @@
+kube-prometheus-stack/
+.venv/
+bootstrap.sh
+values.yaml
