@@ -29,7 +29,7 @@ class PrometheusMiddleware:
         REQUEST_COUNT.labels(
             method=request.method,
             endpoint=request.path,
-            status=response.status_code
+            status=str(response.status_code)
         ).inc()
         
         REQUEST_LATENCY.labels(

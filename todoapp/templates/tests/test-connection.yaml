@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "todoapp.fullname" . }}:{{ .Values.service.port }}']
+      args: ['http://{{ include "todoapp.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never
