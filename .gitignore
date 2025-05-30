@@ -1,0 +1,15 @@
+/kube-prometheus-stack/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.db
+*.sqlite3
+.venv/
+venv/
+.env
+.dockerignore
+.git/
+.vscode/
+.idea/
