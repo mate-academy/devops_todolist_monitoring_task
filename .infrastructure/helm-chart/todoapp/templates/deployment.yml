@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Values.common.namespace }}
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .Values.todoapp.rollingUpdate.maxSurge }}
+      maxUnavailable: {{ .Values.todoapp.rollingUpdate.maxUnavailable }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      containers:
+      - name: {{ .Values.todoapp.image.name }}
+        image: {{ .Values.todoapp.image.repository }}:{{ .Values.todoapp.image.version }}
+        volumeMounts:
+        - name: data
+          mountPath: /app/data
+        - name: app-secrets-volume
+          mountPath: "/app/secrets"
+          readOnly: true
+        - name: app-config-volume
+          mountPath: "/app/configs"
+          readOnly: true
+        resources:
+          requests:
+            memory: {{ .Values.todoapp.resources.requests.memory }}
+            cpu: {{ .Values.todoapp.resources.requests.cpu }}
+          limits:
+            memory: {{ .Values.todoapp.resources.limits.memory }}
+            cpu: {{ .Values.todoapp.resources.limits.cpu }}
+        env:
+        - name: PYTHONUNBUFFERED
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: PYTHONUNBUFFERED
+        {{- range .Values.todoapp.secrets }}
+        - name: {{ .name | upper }}
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: {{ .name }}
+        {{- end }}
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: api/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: api/ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: pvc-data
+      - name: app-secrets-volume
+        secret:
+          secretName: app-secret
+      - name: app-config-volume
+        configMap:
+          name: app-config
+      {{- if .Values.todoapp.nodeAffinity.enabled }}
+      affinity:
+        nodeAffinity:
+          {{- if .Values.todoapp.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution }}
+          preferredDuringSchedulingIgnoredDuringExecution:
+          {{- range .Values.todoapp.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution }}
+          - weight: {{ .weight }}
+            preference:
+              matchExpressions:
+              {{- range .preference.matchExpressions }}
+              - key: {{ .key }}
+                operator: {{ .operator }}
+                values:
+                {{- range .values }}
+                - {{ . }}
+                {{- end }}
+              {{- end }}
+          {{- end }}
+          {{- end }}
+      {{- end }}

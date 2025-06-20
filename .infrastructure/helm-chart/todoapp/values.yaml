@@ -1,0 +1,68 @@
+common:
+  namespace: todoapp
+
+serviceAccount:
+  name: secrets-reader
+
+
+todoapp:
+  image:
+    name: todoapp
+    repository: ikulyk404/todoapp
+    version: 4.0.1
+
+  storage:
+    pvSize: 1Gi
+    pvcSize: 1Gi
+
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    cpu:
+      averageUtilization: 70
+    memory:
+      averageUtilization: 70
+
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+
+  nodeAffinity:
+    enabled: true
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+            - key: app
+              operator: In
+              values:
+                - todoapp
+
+
+  secrets:
+    - name: SECRET_KEY
+      value: "@e2(yx)X&tgh3_s=0yja-h!dpebxsx^dg47x)-k&kq_3zjf*9e*"
+    - name: DB_NAME
+      value: "app_db"
+    - name: DB_USER
+      value: "app_user"
+    - name: DB_PASSWORD
+      value: "1234"
+    - name: DB_HOST
+      value: "mysql.mysql.svc.cluster.local"
+
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "150m"
+    limits:
+      memory: "256Mi"
+      cpu: "150m"
+  serviceMonitor:
+    enabled: true
+    labels: {}
+    interval: 10s
+    path: /metrics
+    port: http
