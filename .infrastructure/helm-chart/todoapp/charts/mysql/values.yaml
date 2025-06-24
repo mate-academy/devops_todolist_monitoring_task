@@ -1,0 +1,63 @@
+# helm-chart/todoapp/charts/mysql/values.yaml
+mysql:
+  namespace: mysql 
+  image:
+    name: mysql
+    repository: mysql
+    version: 8.0
+
+  replicas: 2
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+  secrets:
+    - name: MYSQL_ROOT_PASSWORD
+      value: "mysecretrootpassword"
+    - name: MYSQL_USER
+      value: "app_user"
+    - name: MYSQL_PASSWORD
+      value: "1234"
+    - name: MYSQL_DATABASE
+      value: "app_db"
+
+  persistence:
+    enabled: true
+    storageClass: "standard"
+    accessModes:
+      - ReadWriteOnce
+    size: 2Gi
+
+  tolerations:
+    enabled: true
+    list:
+      - key: "node-role.kubernetes.io/master"
+        operator: "Exists"
+        effect: "NoSchedule"
+      - key: "another-taint-key"
+        operator: "Equal"
+        value: "another-value"
+        effect: "NoExecute" 
+
+
+  affinity:
+    enabled: true
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: "app"
+                operator: "In"
+                values:
+                  - "mysql"
+          topologyKey: "kubernetes.io/hostname"
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: "app"
+                operator: "In"
+                values:
+                  - "mysql"
