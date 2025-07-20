@@ -1,0 +1,8 @@
+# values.yaml
+
+image:
+  repository: yevgene/todoapp
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+# інші налаштування...
