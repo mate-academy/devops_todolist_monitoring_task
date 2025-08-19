@@ -1,13 +1,9 @@
 from prometheus_client import Counter
 
-get_requests_total = Counter(
-    'http_get_requests_total',
-    'Total number of HTTP GET requests'
-)
-post_requests_total = Counter(
-    'http_post_requests_total',
-    'Total number of HTTP POST requests'
-)
+requests_total = Counter(
+    'http_requests_total',
+    'Total number of HTTP requests', ['method']
+    )
 
 
 class PrometheusMiddleware:
@@ -19,10 +15,6 @@ class PrometheusMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        if request.method == 'GET':
-            get_requests_total.inc()
-        elif request.method == 'POST':
-            post_requests_total.inc()
-
+        requests_total.labels(request.method).inc()
         response = self.get_response(request)
         return response
