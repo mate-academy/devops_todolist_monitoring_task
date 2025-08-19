@@ -1,0 +1,10 @@
+from django.http import HttpResponse
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+
+
+def metrics_view(request):
+    """
+    Prometheus metrics endpoint that returns metrics in Prometheus format.
+    """
+    metrics_data = generate_latest()
+    return HttpResponse(metrics_data, content_type=CONTENT_TYPE_LATEST)

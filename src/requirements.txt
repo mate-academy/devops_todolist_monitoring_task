@@ -1,6 +1,9 @@
-asgiref==3.5.2
-Django==4.1.10
-djangorestframework==3.13.1
-pytz==2022.1
-sqlparse==0.4.4
-mysql-connector-python==8.2.0
+asgiref==3.9.1
+Django==5.2.5
+djangorestframework==3.16.1
+mysql-connector==2.2.9
+mysql-connector-python==9.4.0
+prometheus_client==0.22.1
+protobuf==6.32.0
+pytz==2025.2
+sqlparse==0.5.3
