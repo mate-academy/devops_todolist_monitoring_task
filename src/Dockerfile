@@ -1,5 +1,5 @@
 # Stage 1: Build Stage
-ARG PYTHON_VERSION=3.8
+ARG PYTHON_VERSION=3.13
 FROM python:${PYTHON_VERSION}-alpine as builder
 
 # Set the working directory
