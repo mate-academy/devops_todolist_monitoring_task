@@ -4,6 +4,10 @@ from rest_framework import permissions, viewsets
 from api.serializers import TodoListSerializer, TodoSerializer, UserSerializer
 from lists.models import Todo, TodoList
 
+
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
+from django.views.decorators.csrf import csrf_exempt
+
 from django.http import HttpResponse
 from django.utils import timezone
 import time
@@ -74,3 +78,17 @@ def ready(request):
     else:
         # After 30 seconds, return HTTP 200
         return HttpResponse("Readiness OK", content_type="text/plain")
+
+
+http_requests_total = Counter('http_requests_total', 'Total HTTP requests', ['method'])
+
+def count_requests(get_response):
+    def middleware(request):
+        http_requests_total.labels(method=request.method).inc()
+        return get_response(request)
+    return middleware
+
+@csrf_exempt
+def metrics(request):
+    data = generate_latest()
+    return HttpResponse(data, content_type=CONTENT_TYPE_LATEST)
