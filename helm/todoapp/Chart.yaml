@@ -1,0 +1,17 @@
+apiVersion: v2
+name: todoapp
+description: Django Todo List Application with Prometheus Metrics
+type: application
+version: 1.0.0
+appVersion: "4.0.1"
+keywords:
+  - django
+  - todo
+  - prometheus
+  - monitoring
+home: https://github.com/your-org/todoapp
+sources:
+  - https://github.com/your-org/todoapp
+maintainers:
+  - name: Your Name
+    email: your.email@example.com
