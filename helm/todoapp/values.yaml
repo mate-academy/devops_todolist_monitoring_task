@@ -1,0 +1,98 @@
+# Default values for todoapp
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 2
+
+image:
+  repository: ikulyk404/todoapp
+  pullPolicy: IfNotPresent
+  tag: "4.0.1"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+  metricsPort: 8080
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  hosts:
+    - host: todoapp.local
+      paths:
+        - path: /(|$)(.*)
+          pathType: Prefix
+  tls: []
+
+resources:
+  limits:
+    cpu: 150m
+    memory: 256Mi
+  requests:
+    cpu: 150m
+    memory: 256Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 70
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Prometheus monitoring configuration
+serviceMonitor:
+  enabled: true
+  labels: {}
+  interval: 10s
+  path: /metrics
+  port: http
+
+# Database configuration
+database:
+  host: "mysql-0.mysql.mysql.svc.cluster.local"
+  name: "app_db"
+  user: "app_user"
+  password: "1234"
+
+# Secrets
+secrets:
+  secretKey: "dGVzdC1zZWNyZXQta2V5LWZvci10ZXN0aW5nLW9ubHk="
+  dbName: "YXBwX2RiCg=="
+  dbUser: "YXBwX3VzZXI="
+  dbPassword: "MTIzNA=="
+  dbHost: "bXlzcWwtMC5teXNxbC5teXNxbC5zdmMuY2x1c3Rlci5sb2NhbAo="
