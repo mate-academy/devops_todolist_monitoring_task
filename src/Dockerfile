@@ -1,24 +1,27 @@
-# Stage 1: Build Stage
-ARG PYTHON_VERSION=3.8
-FROM python:${PYTHON_VERSION} as builder
+FROM python:3.12-slim
 
-# Set the working directory
-WORKDIR /app
-COPY . .
-
-# Stage 2: Run Stage
-FROM python:${PYTHON_VERSION} as run
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
 WORKDIR /app
 
-ENV PYTHONUNBUFFERED=1
+# системні залежності за потреби:
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+ && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /app .
+# спочатку requirements — щоб кеш працював
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
+# далі код
+COPY . /app
 
-EXPOSE 8080
+# змінні для дев-режиму (секрети у проді не так!)
+ENV USE_SQLITE=1 \
+    SECRET_KEY="dev-secret-change-me"
 
-# Run database migrations and start the Django application
-ENTRYPOINT ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8080"]
+EXPOSE 8000
+
+CMD ["bash", "-lc", "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"]

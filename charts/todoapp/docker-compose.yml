@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  todoapp:
+    build:
+      context: ../../src
+      dockerfile: Dockerfile
+    container_name: todoapp
+    restart: unless-stopped
+    environment:
+      - USE_SQLITE=1
+      - SECRET_KEY=dev-secret-change-me
+    ports:
+      - "8000:8000"
+    depends_on:
+      - cadvisor
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro

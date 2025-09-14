@@ -51,6 +51,7 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "monitoring.middleware.PrometheusRequestCounterMiddleware",
 )
 
 ROOT_URLCONF = "todolist.urls"
@@ -61,21 +62,33 @@ WSGI_APPLICATION = "todolist.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
-DB_NAME = os.environ.get("DB_NAME", "")
-DB_USER = os.environ.get("DB_USER", "")
-DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
-DB_HOST = os.environ.get("DB_HOST", "")
+# By default use SQLite for local dev, switch to MySQL via USE_SQLITE=0
+USE_SQLITE = os.environ.get("USE_SQLITE", "1")  # "1" = SQLite, "0" = MySQL
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'mysql.connector.django',
-        'NAME': DB_NAME,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASSWORD,
-        'HOST': DB_HOST,  # You can use a different host if your MySQL server is on a remote machine.
-        'PORT': '',  # Leave this empty to use the default MySQL port (3306).
+if USE_SQLITE == "1":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        }
     }
-}
+else:
+    DB_NAME = os.environ.get("DB_NAME", "")
+    DB_USER = os.environ.get("DB_USER", "")
+    DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
+    DB_HOST = os.environ.get("DB_HOST", "127.0.0.1")
+    DB_PORT = os.environ.get("DB_PORT", "3306")
+
+    DATABASES = {
+        "default": {
+            "ENGINE": "mysql.connector.django",
+            "NAME": DB_NAME,
+            "USER": DB_USER,
+            "PASSWORD": DB_PASSWORD,
+            "HOST": DB_HOST,
+            "PORT": DB_PORT,
+        }
+    }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/

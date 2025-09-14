@@ -1,0 +1,9 @@
+service:
+  type: ClusterIP
+  port: 8000
+
+serviceMonitor:
+  enabled: true
+  interval: 10s
+  path: /metrics
+  scheme: http
