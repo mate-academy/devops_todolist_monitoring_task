@@ -101,4 +101,4 @@ spec:
               - key: app
                 operator: In
                 values:
-                - kube2py
+                - todoapp
