@@ -11,9 +11,6 @@ spec:
   - name: mysql
     port: 3306
   clusterIP: None
-    - name: http
-      port: 8080
-      targetPort: 8080
 
 
 # pod-name.service-name.namespace.svc.cluster.local
