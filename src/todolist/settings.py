@@ -14,6 +14,20 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
+from api.views import REQUEST_GET_COUNT, REQUEST_POST_COUNT
+
+
+
+class RequestCounterMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.method == 'GET':
+            REQUEST_GET_COUNT.inc()
+        elif request.method == 'POST':
+            REQUEST_POST_COUNT.inc()
+        return self.get_response(request)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
@@ -51,6 +65,7 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'todolist.settings.RequestCounterMiddleware',
 )
 
 ROOT_URLCONF = "todolist.urls"
