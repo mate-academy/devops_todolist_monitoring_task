@@ -6,6 +6,7 @@ from lists.models import Todo, TodoList
 
 from django.http import HttpResponse
 from django.utils import timezone
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
 import time
 
 startup_time = timezone.now()
@@ -74,3 +75,4 @@ def ready(request):
     else:
         # After 30 seconds, return HTTP 200
         return HttpResponse("Readiness OK", content_type="text/plain")
+
