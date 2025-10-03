@@ -4,7 +4,6 @@ kind: ServiceMonitor
 metadata:
   name: {{ include "todoapp.fullname" . }}
   labels:
-    release: kube-prometheus-stack
     {{- with .Values.serviceMonitor.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}

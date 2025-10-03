@@ -76,9 +76,3 @@ def ready(request):
         # After 30 seconds, return HTTP 200
         return HttpResponse("Readiness OK", content_type="text/plain")
 
-def metrics_view(request):
-    if request.method == 'GET':
-        REQUEST_GET_COUNT.inc()
-    elif request.method == 'POST':
-        REQUEST_POST_COUNT.inc()
-    return HttpResponse(generate_latest(), content_type=CONTENT_TYPE_LATEST)

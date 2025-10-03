@@ -6,5 +6,4 @@ class RequestCounterMiddleware:
 
     def __call__(self, request):
         REQUEST_COUNT.labels(method=request.method).inc()
-        response = self.get_response(request)
-        return response
+        return self.get_response(request)
