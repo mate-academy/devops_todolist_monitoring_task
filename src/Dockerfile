@@ -22,3 +22,6 @@ EXPOSE 8080
 
 # Run database migrations and start the Django application
 ENTRYPOINT ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8080"]
+
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r /app/requirements.txt
