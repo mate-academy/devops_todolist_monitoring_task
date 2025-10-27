@@ -1,6 +1,8 @@
+from prometheus_client import Counter, CONTENT_TYPE_LATEST, generate_latest
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 from lists.forms import TodoForm, TodoListForm
 from lists.models import Todo, TodoList
@@ -78,3 +80,14 @@ def add_todolist(request):
             return render(request, "lists/overview.html", {"form": form})
 
     return redirect("lists:index")
+
+GET_COUNTER = Counter('todo_get_requests_total', 'Total GET requests')
+POST_COUNTER = Counter('todo_post_requests_total', 'Total POST requests')
+
+def metrics(request):
+    if request.method == 'GET':
+        GET_COUNTER.inc()
+    elif request.method == 'POST':
+        POST_COUNTER.inc()
+
+    return HttpResponse(generate_latest(), content_type=CONTENT_TYPE_LATEST)

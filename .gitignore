@@ -1,0 +1,10 @@
+.idea/
+
+venv/
+
+/kube-prometheus-stack/**
+
+!/kube-prometheus-stack/servicemonitor.yaml
+!/kube-prometheus-stack/values.yaml
+
+*.pyc
