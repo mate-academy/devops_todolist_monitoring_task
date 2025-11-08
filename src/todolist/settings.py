@@ -11,8 +11,19 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
+
+from .metrics import REQUEST_COUNT
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+
+class RequestCounterMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        REQUEST_COUNT.labels(method=request.method).inc()
+        return self.get_response(request)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
@@ -51,6 +62,7 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'api.middleware.RequestCounterMiddleware',
 )
 
 ROOT_URLCONF = "todolist.urls"
