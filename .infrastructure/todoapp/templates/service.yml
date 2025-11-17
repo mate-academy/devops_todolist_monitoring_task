@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: todoapp-service
+  namespace: todoapp
+  labels: # <--- ВАЖЛИВО: Ці мітки використовуються ServiceMonitor для вибору Service
+    app.kubernetes.io/name: todoapp
+    app.kubernetes.io/instance: todoapp
+spec:
+  type: ClusterIP 
+  selector:
+    app: todoapp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+    name: http # <--- КЛЮЧОВЕ: Це ім'я порту відповідає serviceMonitor.port: http

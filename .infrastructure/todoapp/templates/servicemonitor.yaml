@@ -1,0 +1,27 @@
+{{- if .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "todoapp.fullname" . }}-monitor
+  labels:
+    release: kube-prometheus-stack
+    {{- with .Values.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  # ДОДАНО: Вказуємо ServiceMonitor шукати в просторі імен 'todoapp'
+  namespaceSelector:
+    matchNames:
+      - todoapp
+  # АБО
+  # namespaceSelector:
+  #   any: true # Якщо ви не впевнені, де знаходиться Service
+
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: todoapp
+  endpoints:
+    - port: {{ .Values.serviceMonitor.port }}
+      path: {{ .Values.serviceMonitor.path }}
+      interval: {{ .Values.serviceMonitor.interval }}
+{{- end }}
