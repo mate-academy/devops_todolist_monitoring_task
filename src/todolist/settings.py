@@ -8,17 +8,17 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", "")
+# Локально просто ставимо дефолт, а в контейнері можна буде пробросити SECRET_KEY через env
+SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key-change-me-1234567890")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -28,7 +28,6 @@ ALLOWED_HOSTS = ["*"]
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Application definition
-
 INSTALLED_APPS = (
     "django.contrib.admin",
     "django.contrib.auth",
@@ -51,35 +50,33 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "todolist.middleware.RequestMetricsMiddleware",
 )
 
 ROOT_URLCONF = "todolist.urls"
 
 WSGI_APPLICATION = "todolist.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
+# Залишаємо env-змінні про запас (можна буде юзати для MySQL в контейнері)
 DB_NAME = os.environ.get("DB_NAME", "")
 DB_USER = os.environ.get("DB_USER", "")
 DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
 DB_HOST = os.environ.get("DB_HOST", "")
+# DB_PORT = os.environ.get("DB_PORT", "3306")  # якщо знадобиться
 
+# Локальний варіант — SQLite, щоб нічого не піднімати
 DATABASES = {
-    'default': {
-        'ENGINE': 'mysql.connector.django',
-        'NAME': DB_NAME,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASSWORD,
-        'HOST': DB_HOST,  # You can use a different host if your MySQL server is on a remote machine.
-        'PORT': '',  # Leave this empty to use the default MySQL port (3306).
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
@@ -90,19 +87,13 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
-
 STATIC_URL = "/static/"
 
-
 # Login settings
-
 LOGIN_URL = "/auth/login/"
-
 LOGOUT_URL = "/auth/logout/"
-
 
 # rest (api) framework
 REST_FRAMEWORK = {
