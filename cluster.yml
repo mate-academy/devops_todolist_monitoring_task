@@ -23,7 +23,7 @@ nodes:
 # the control plane node config
 - role: control-plane
   extraMounts:
-    - hostPath: /tmp
+    - hostPath: ./data
       containerPath: /data
   kubeadmConfigPatches:
   - |
@@ -45,35 +45,35 @@ nodes:
 # the two workers
 - role: worker
   extraMounts:
-    - hostPath: /tmp
+    - hostPath: ./data
       containerPath: /data
   labels:
     app: mysql
 - role: worker
   extraMounts:
-    - hostPath: /tmp
+    - hostPath: ./data
       containerPath: /data
   labels:
     app: mysql
 - role: worker
   extraMounts:
-    - hostPath: /tmp
+    - hostPath: ./data
       containerPath: /data
   labels:
     app: todoapp
 - role: worker
   extraMounts:
-    - hostPath: /tmp
+    - hostPath: ./data
       containerPath: /data
   labels:
     app: todoapp
 - role: worker
   extraMounts:
-    - hostPath: /tmp
+    - hostPath: ./data
       containerPath: /data
   labels:
     app: todoapp
 - role: worker
   extraMounts:
-    - hostPath: /tmp
+    - hostPath: ./data
       containerPath: /data

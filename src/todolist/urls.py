@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import include, path
+from .metrics_view import metrics
 
 urlpatterns = [
     path("", include("lists.urls")),
@@ -7,4 +8,6 @@ urlpatterns = [
     path("api/", include("api.urls")),
     path("api-auth/", include("rest_framework.urls")),
     path("admin/", admin.site.urls),
+    path("metrics/", metrics),
+    path("metrics", metrics),
 ]

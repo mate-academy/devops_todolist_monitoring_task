@@ -1,0 +1,22 @@
+.venv/
+.venv
+ENV/
+
+# Python compiled files (junk files created when running python)
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE settings (VS Code)
+.vscode/
+
+# Helm Chart archives (if you package your charts)
+*.tgz
+*.lock
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+
+kube-prometheus-stack/

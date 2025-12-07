@@ -17,6 +17,7 @@ COPY --from=builder /app .
 
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
+    pip install prometheus_client
 
 EXPOSE 8080
 
