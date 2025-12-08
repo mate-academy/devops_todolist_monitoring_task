@@ -1,14 +1,13 @@
-from django.contrib.auth.models import User
-from rest_framework import permissions, viewsets
-
 from api.serializers import TodoListSerializer, TodoSerializer, UserSerializer
-from lists.models import Todo, TodoList
-
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.utils import timezone
-import time
+from lists.models import Todo, TodoList
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+from rest_framework import permissions, viewsets
 
 startup_time = timezone.now()
+
 
 class IsCreatorOrReadOnly(permissions.BasePermission):
     """
@@ -31,14 +30,12 @@ class IsCreatorOrReadOnly(permissions.BasePermission):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAdminUser,)
 
 
 class TodoListViewSet(viewsets.ModelViewSet):
-
     queryset = TodoList.objects.all()
     serializer_class = TodoListSerializer
     permission_classes = (IsCreatorOrReadOnly,)
@@ -50,7 +47,6 @@ class TodoListViewSet(viewsets.ModelViewSet):
 
 
 class TodoViewSet(viewsets.ModelViewSet):
-
     queryset = Todo.objects.all()
     serializer_class = TodoSerializer
     permission_classes = (IsCreatorOrReadOnly,)
@@ -60,9 +56,11 @@ class TodoViewSet(viewsets.ModelViewSet):
         creator = user if user.is_authenticated else None
         serializer.save(creator=creator)
 
+
 # Health Check View
 def health(request):
     return HttpResponse("Health OK", content_type="text/plain")
+
 
 # Readiness Check View
 def ready(request):
@@ -74,3 +72,8 @@ def ready(request):
     else:
         # After 30 seconds, return HTTP 200
         return HttpResponse("Readiness OK", content_type="text/plain")
+
+
+def metrics(request):
+    data = generate_latest()
+    return HttpResponse(data, content_type=CONTENT_TYPE_LATEST)
