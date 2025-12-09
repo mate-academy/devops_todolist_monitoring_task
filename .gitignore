@@ -1,0 +1,3 @@
+# Helm charts pulled locally
+kube-prometheus-stack/
+kube-prometheus-stack-*.tgz
