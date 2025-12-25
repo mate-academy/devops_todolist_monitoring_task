@@ -1,0 +1,8 @@
+__pycache__/
+venv/
+*.pyc
+*.pyo
+*.pyd
+# Helm charts pulled locally
+kube-prometheus-stack/
+kube-prometheus-stack-*.tgz
