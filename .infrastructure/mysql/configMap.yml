@@ -8,8 +8,9 @@ metadata:
 data:
   init.sql: |
     GRANT ALL PRIVILEGES ON app_db.* TO 'app_user'@'%';
+    FLUSH PRIVILEGES;
     USE app_db;
-    CREATE TABLE counter (
+    CREATE TABLE IF NOT EXISTS counter (
         id INT AUTO_INCREMENT PRIMARY KEY,
         value INT
     );
