@@ -1,0 +1,70 @@
+common:
+  namespace: todoapp
+
+todoapp:
+  deployment:
+    image:
+      repository: ikulyk404/todoapp
+      tag: 4.0.3
+
+    secrets:
+      SECRET_KEY: "@e2(yx)v&tgh3_s=0yja-i!dpebxsz^dg47x)-k&kq_3zf*9e*"
+      DB_NAME: "app_db"
+      DB_USER: "app_user"
+      DB_PASSWORD: "1234"
+      DB_HOST: "mysql-statefulset-0.mysql-service.todoapp.svc.cluster.local"
+
+
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "150m"
+      limits:
+        memory: "256Mi"
+        cpu: "150m"
+
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
+    affinity:
+      nodeAffinity:
+        preferred:
+          key: "app"
+          operator: In
+          values:
+          - "kube2py"
+
+  deploymentService:
+    labels:
+      app: todoapp
+      release: prometheus
+
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 70
+
+  pv:
+    storage: 1Gi
+
+  pvc:
+    storage: 1Gi
+
+  rbac:
+    enabled: true
+    serviceAccountName: secrets-reader
+    Role:
+      name: secrets-reader
+    RoleBinding:
+      name: secrets-reader-binding
+
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: kube-prometheus-stack
+    interval: 10s
+    path: /metrics
+    port: http

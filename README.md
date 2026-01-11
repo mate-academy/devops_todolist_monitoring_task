@@ -1,67 +1,67 @@
-# Django ToDo List
+# Список справ на Django
 
-In this task you will enhance a todo list web application by adding a /metrics endpoint that returns the number of GET and POST requests in a Prometheus-compatible format.
+У цьому завданні ви покращите веб-застосунок списку справ, додавши ендпоінт /metrics, який повертає кількість запитів GET та POST у форматі, сумісному з Prometheus.
 
-To do this task, you will need:
+Для виконання цього завдання вам знадобиться:
 
 - CSS | [Skeleton](http://getskeleton.com/)
 - JS  | [jQuery](https://jquery.com/)
 
-## Explore
+## Ознайомлення
 
-Try it out by installing the requirements (the following commands work only with Python 3.8 and higher, due to Django 4):
+Спробуйте, встановивши залежності (наведені команди працюють лише з Python 3.8 і вище через Django 4):
 
 ```
 pip install -r requirements.txt
 ```
 
-Create a database schema:
+Створіть схему бази даних:
 
 ```
 python manage.py migrate
 ```
 
-And then start the server (default is http://localhost:8000):
+А потім запустіть сервер (за замовчуванням http://localhost:8000):
 
 ```
 python manage.py runserver
 ```
 
-Now you can browse the [API](http://localhost:8000/api/) or start on the [landing page](http://localhost:8000/).
+Тепер ви можете переглянути [API](http://localhost:8000/api/) або почати зі [стартової сторінки](http://localhost:8000/).
 
-## Task
-Follow the steps below to complete the task:
+## Завдання
+Дотримуйтесь наступних кроків, щоб виконати завдання:
 
-1. Fork the repository to your GitHub account.
+1. Форкніть репозиторій у свій обліковий запис GitHub.
 
-2. Create a new `/metrics` endpoint (not `api/metrics`):
-   - Modify the application code to include a `/metrics` endpoint.
-   - Ensure it returns the number of GET and POST requests in a Prometheus-compatible format.
+2. Створіть новий ендпоінт `/metrics` (не `api/metrics`):
+   - Внесіть зміни в код застосунку, щоб додати ендпоінт `/metrics`.
+   - Переконайтеся, що він повертає кількість запитів GET та POST у форматі, сумісному з Prometheus.
 
-3. Add Prometheus library:
-   - Include `prometheus_client` in the application's requirements.
-   - Ensure it's installed during the Docker build process.
+3. Додайте бібліотеку Prometheus:
+   - Додайте `prometheus_client` до вимог застосунку.
+   - Переконайтеся, що вона встановлюється під час процесу збірки Docker.
 
-4. Cluster setup:
-   - Use `kind` to spin up a cluster from a `cluster.yml` configuration file.
+4. Налаштування кластера:
+   - Використайте `kind`, щоб підняти кластер з конфігураційного файлу `cluster.yml`.
 
-5. Pull the kube-prometheus-stack:
+5. Завантажте kube-prometheus-stack:
    - [Prometheus](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
    ```bash
    helm pull prometheus-community/kube-prometheus-stack --version <version_number> --untar
    ```
 
-6. Install the kube-prometheus-stack Helm chart:
+6. Встановіть Helm-чарт kube-prometheus-stack:
    ```bash
    helm install kube-prometheus-stack ./kube-prometheus-stack
    ```
-    * **Note**: If you encounter issues deploying on Ubuntu, particularly related to the admission controller, find the `admissionWebhooks` section in the `values.yaml` and set:
+    * Примітка: Якщо виникають проблеми з розгортанням на Ubuntu, зокрема пов’язані з admission controller, знайдіть секцію `admissionWebhooks` у `values.yaml` і встановіть:
    ```yaml
    admissionWebhooks:
      enabled: false
    ```
 
-7. Modify the `values.yaml` file in the `todoapp` Helm chart:
+7. Змініть файл `values.yaml` у Helm-чаті `todoapp`:
    ```yaml
       serviceMonitor:
         enabled: true
@@ -71,44 +71,44 @@ Follow the steps below to complete the task:
         port: http
     ```
 
-8. Configure your `todoapp` Helm chart:
-   - In the Helm chart's templates directory, create a new file named `servicemonitor.yaml` with the necessary configuration.
-   - Ensure your app's `service.yaml` exposes the metrics port and has the necessary labels for the ServiceMonitor to select.
-   - Perform port forwarding to your application service to expose the metrics endpoint:
+8. Налаштуйте Helm-чарт `todoapp`:
+   - У директорії templates Helm-чету створіть новий файл `servicemonitor.yaml` з необхідною конфігурацією.
+   - Переконайтеся, що `service.yaml` вашого застосунку експонує порт метрик і має необхідні мітки (labels), щоб ServiceMonitor міг його вибрати.
+   - Виконайте перенаправлення порту для сервісу вашого застосунку, щоб відкрити ендпоінт метрик:
       ```bash
       kubectl port-forward svc/<your-service-name> 8080:<app-port>
       ```
-9. Apply Helm Chart:
-   - Apply the Helm chart to the cluster.
-   - Verify that the ServiceMonitor has been created.
+9. Застосуйте Helm-чарт:
+   - Застосуйте Helm-чарт до кластера.
+   - Переконайтеся, що ServiceMonitor було створено.
 
-10. Verify Prometheus scraping:
-   - Check Prometheus dashboard for the target status to ensure it's scraping metrics from the `todoapp`.
+10. Перевірте збір Prometheus:
+   - Відкрийте дашборд Prometheus і перевірте статус цілі (target), щоб переконатися, що він збирає метрики з `todoapp`.
 
-11. Create Grafana dashboard:
-   - Open the Grafana UI and click on the **+** icon in the sidebar to create a new dashboard.
-   - Click **Add new panel** to start configuring your first metric visualization.
+11. Створіть дашборд Grafana:
+   - Відкрийте інтерфейс Grafana та натисніть **+** у боковій панелі, щоб створити новий дашборд.
+   - Натисніть **Add new panel**, щоб розпочати налаштування першої візуалізації метрики.
 
-12. Visualize total HTTP requests:
-    - Set up a panel titled **Total HTTP Requests**.
-    - Use the query to visualize the total number of HTTP requests:
+12. Візуалізуйте загальну кількість HTTP-запитів:
+    - Створіть панель з назвою **Total HTTP Requests**.
+    - Використайте запит для візуалізації загальної кількості HTTP-запитів:
         ```
         sum(rate(<your_custom_metric>[5m])) by (method)
         ```
-    - This query will show the rate of HTTP requests per second, averaged over the past 5 minutes, broken down by method (GET or POST).
-    - Choose a visualization type such as Graph, Bar Gauge, or Stat to represent this data.
+    - Цей запит показує швидкість HTTP-запитів за секунду, усереднену за останні 5 хвилин, розбиту за методом (GET або POST).
+    - Оберіть тип візуалізації, наприклад Graph, Bar Gauge або Stat, щоб представити ці дані.
 
-13. Visualize HTTP requests creation time:
-    - Add a panel titled **HTTP Requests Creation Time**.
-    - Use the query to visualize the creation time of the requests:
+13. Візуалізуйте час створення HTTP-запитів:
+    - Додайте панель з назвою **HTTP Requests Creation Time**.
+    - Використайте запит для візуалізації часу створення запитів:
         ```
         <your_custom_metric>
         ```
-    - This metric represents the time when the HTTP request counters were created or reset, which can be useful for identifying when the application was restarted.
-    - Choose a Singlestat or Stat visualization for this metric.
+    - Ця метрика відображає час, коли лічильники HTTP-запитів були створені або скинуті, що може бути корисним для виявлення моменту перезапуску застосунку.
+    - Для цієї метрики підійде візуалізація типу Singlestat або Stat.
 
-14. Customize panel settings:
-    - Adjust panel settings such as axes, legend, and thresholds as desired.
-    - Utilize Grafana’s functions for formatting the display.
+14. Налаштуйте параметри панелі:
+    - Відрегулюйте налаштування панелі, такі як осі, легенда та пороги, за потреби.
+    - Скористайтеся функціями Grafana для форматування відображення.
 
-14. Submit a PR with your changes and attach screenshots of your Grafana dashboard for validation on the specified platform.
+14. Відправте Pull Request із вашими змінами та додайте скріншоти дашборда Grafana для валідації на зазначеній платформі.
