@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Chart.Name }}-statefulset
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  replicas: {{ .Values.mysql.statefulSet.replicaCount }}
+  serviceName: {{ .Chart.Name }}-service
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}-container
+        image: {{ .Values.mysql.statefulSet.image.repository }}:{{ .Values.mysql.statefulSet.image.tag }}
+        env:
+        {{- range $k, $v := .Values.mysql.statefulSet.secrets }}
+        - name: {{ $k }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ $.Chart.Name }}-secrets
+              key: {{ $k }}
+        {{- end }}
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Chart.Name }}-config
+              key: MYSQL_DATABASE
+        ports:
+        - name: {{ .Chart.Name }}
+          containerPort: 3306
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/mysql
+          subPath: mysql
+        - name: {{ .Chart.Name }}-init-config
+          mountPath: /docker-entrypoint-initdb.d
+        resources:
+          requests:
+            cpu: {{ .Values.mysql.statefulSet.resources.requests.cpu }}
+            memory: {{ .Values.mysql.statefulSet.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.mysql.statefulSet.resources.limits.cpu }}
+            memory: {{ .Values.mysql.statefulSet.resources.limits.memory }}
+        livenessProbe:
+          exec:
+            command: ["mysqladmin", "ping"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          exec:
+            command: ["mysqladmin", "ping"]
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 1
+      volumes:
+      - name: {{ .Chart.Name }}-init-config
+        configMap:
+          name: {{ .Chart.Name }}-config
+      tolerations:
+      {{- range .Values.mysql.statefulSet.tolerations }}
+      - key: {{ .key }}
+        operator: {{ .operator }}
+        value: {{ .value }}
+        effect: {{ .effect }}
+      {{- end }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          {{- range .Values.mysql.statefulSet.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution }}
+            - labelSelector:
+                matchExpressions:
+                {{- range .labelSelector.matchExpressions }}
+                  - key: {{ .key }}
+                    operator: {{ .operator }}
+                    values:
+                    {{- range .values }}
+                      - {{ . }}
+                    {{- end }}
+                {{- end }}
+              topologyKey: {{ .topologyKey }}
+          {{- end }}
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            {{- range .Values.mysql.statefulSet.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution }}
+              - matchExpressions:
+              {{- range .matchExpressions }}
+                - key: {{ .key }}
+                  operator: {{ .operator }}
+                  values:
+                  {{- range .values }}
+                    - {{ . }}
+                  {{- end }}
+              {{- end }}
+            {{- end }}
+
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      {{- range .Values.mysql.statefulSet.pvc.accessModes }}
+      - {{ . }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.mysql.statefulSet.pvc.resources.requests.storage }}
+      storageClassName: {{ .Values.mysql.statefulSet.pvc.storageClassName }}

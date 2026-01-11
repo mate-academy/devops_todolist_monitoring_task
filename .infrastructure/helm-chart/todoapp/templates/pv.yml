@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-{{ .Chart.Name }}
+  namespace: {{ .Values.common.namespace }}
+spec:
+  storageClassName: standard
+  persistentVolumeReclaimPolicy: Delete
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: {{ .Values.todoapp.pv.storage }}
+  hostPath:
+    path: /data/{{ .Chart.Name }}

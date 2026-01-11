@@ -1,0 +1,111 @@
+# === Python / Django ===
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.env/
+.env*/
+.venv/
+ENV/
+env/
+
+# Packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+.coverage.*
+.cache/
+htmlcov/
+nosetests.xml
+coverage.xml
+.tox/
+.mypy_cache/
+.ruff_cache/
+pytestdebug.log
+
+# Type checkers / linters
+.pytype/
+.pyre/
+
+# Logs & temp
+*.log
+logs/
+log/
+*.pid
+*.out
+*.err
+tmp/
+.temp/
+
+# Django specific
+static/
+staticfiles/
+media/
+# Local settings & secrets
+*.env
+.env.local
+.env.dev
+.env.test
+.env.prod
+.env.example
+.envrc
+*.secret
+*.secrets
+*.key
+*.pem
+*.crt
+
+# SQLite
+*.sqlite3
+
+# JetBrains (PyCharm)
+.idea/
+# VS Code
+.vscode/
+# Common editor junk
+*.swp
+*.swo
+*~
+
+# === OS junk ===
+Thumbs.db
+Desktop.ini
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# === Docker ===
+Dockerfile.*.local
+.docker/
+.dockerignore.local
+docker-compose.override.yml
+docker-compose.*.local.yml
+
+# === Kubernetes / Helm ===
+kube-prometheus-stack/
+
+values.local.yaml
+values-*.local.yaml
+**/rendered-*.yaml
+**/*.rendered.yaml
+**/charts/*.tgz
+kubectl-*.yaml
+
+
+**/grafana/export-*.json
+**/grafana/*.bak
+
+
+pip-wheel-metadata/
+.poetry/
+.pre-commit-cache/
+
+*/migrations/__pycache__/
+*/migrations/*.pyc
