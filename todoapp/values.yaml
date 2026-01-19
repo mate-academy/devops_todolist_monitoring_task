@@ -1,0 +1,13 @@
+image:
+  repository: taniakolesnik/todoapp
+  tag: "3.0.0"
+
+service:
+  port: 8080
+
+serviceMonitor:
+  enabled: true
+  labels: {}
+  interval: 10s
+  path: /metrics
+  port: http

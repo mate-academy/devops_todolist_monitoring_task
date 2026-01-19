@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "todoapp.fullname" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todoapp
+  template:
+    metadata:
+      labels:
+        app: todoapp
+    spec:
+      containers:
+      - name: todoapp
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - containerPort: {{ .Values.service.port }}
+        env:
+        - name: SECRET_KEY
+          value: dummy-secret
+        - name: DB_NAME
+          value: app_db
+        - name: DB_USER
+          value: app_user
+        - name: DB_PASSWORD
+          value: "1234"
+        - name: DB_HOST
+          value: mysql.mysql.svc.cluster.local
