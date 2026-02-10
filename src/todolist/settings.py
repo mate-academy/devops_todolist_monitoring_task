@@ -44,6 +44,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE = (
+    "todolist.middleware.PrometheusMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",

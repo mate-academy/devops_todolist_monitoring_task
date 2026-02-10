@@ -1,0 +1,40 @@
+namespace: todo-ns
+
+image:
+  repository: mysql
+  tag: "8.0"
+
+replicas: 1
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 200m
+    memory: 512Mi
+
+pvc:
+  storage: 1Gi
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: app
+          operator: In
+          values:
+          - mysql
+
+tolerations:
+- key: "app"
+  operator: "Equal"
+  value: "mysql"
+  effect: "NoSchedule"
+
+secrets:
+  MYSQL_ROOT_PASSWORD: "rootpassword"
+  MYSQL_DATABASE: "todo_db"
+  MYSQL_USER: "todo_user"
+  MYSQL_PASSWORD: "securepassword"

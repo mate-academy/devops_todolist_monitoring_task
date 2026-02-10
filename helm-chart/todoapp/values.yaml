@@ -1,0 +1,105 @@
+namespace: todo-ns
+replicaCount: 1
+
+image:
+  repository: ikulyk404/todoapp
+  tag: "5.0.1"
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+env:
+  - name: SECRET_KEY
+    value: "django-insecure-key-12345"
+  - name: DB_HOST
+
+    value: "todoapp-mysql"
+  - name: DB_PORT
+    value: "3306"
+  - name: DB_NAME
+    value: "todolist"
+  - name: DB_USER
+    value: "root"
+  - name: DB_PASSWORD
+    value: "techtalentschool"
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: "todoapp-sa"
+
+pv:
+  enabled: true
+  capacity: 1Gi
+  accessMode: ReadWriteOnce
+  path: "/mnt/data"
+  hostPath: "/mnt/data"
+
+pvc:
+  enabled: true
+  storage: 1Gi
+  accessMode: ReadWriteOnce
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+  name: http
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+strategy:
+  type: RollingUpdate
+rollingUpdate:
+  maxSurge: 25%
+  maxUnavailable: 25%
+
+nodeAffinity:
+  key: "kubernetes.io/os"
+  operator: "In"
+  values:
+    - linux
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50
+  targetMemoryUtilizationPercentage: 50
+
+podAnnotations: {}
+podSecurityContext: {}
+securityContext: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+serviceMonitor:
+  enabled: true
+  interval: 10s
+  path: /metrics
+  port: http
+  labels:
+    release: prometheus-stack
+
+mysql:
+  enabled: true
+  auth:
+    rootPassword: "techtalentschool"
+    database: "todolist"
