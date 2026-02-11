@@ -17,10 +17,10 @@ spec:
       labels:
         app: todoapp
     spec:
-      serviceAccountName: secrets-reader
       containers:
       - name: todoapp
-        image: ikulyk404/todoapp:4.0.1
+        image: todoapp:stable
+        imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: data
           mountPath: /app/data
@@ -69,17 +69,17 @@ spec:
               name: app-secret
               key: DB_HOST
         ports:
-        - containerPort: 8080
+        - containerPort: 8000
         livenessProbe:
           httpGet:
             path: api/health
-            port: 8080
+            port: 8000
           initialDelaySeconds: 60
           periodSeconds: 5
         readinessProbe:
           httpGet:
             path: api/ready
-            port: 8080
+            port: 8000
           initialDelaySeconds: 5
           periodSeconds: 5
       volumes:
