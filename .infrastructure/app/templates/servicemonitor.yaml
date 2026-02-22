@@ -5,7 +5,7 @@ metadata:
   name: {{ .Release.Name }}-todoapp
   namespace: {{ .Release.Namespace }}
   labels:
-    release: kube-prometheus-stack
+    {{- toYaml .Values.serviceMonitor.labels | nindent 4 }}
 spec:
   selector:
     matchLabels:
