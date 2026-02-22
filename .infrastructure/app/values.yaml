@@ -1,0 +1,7 @@
+serviceMonitor:
+  enabled: true
+  labels:
+    release: kube-prometheus-stack
+  interval: 10s
+  path: /metrics
+  port: http

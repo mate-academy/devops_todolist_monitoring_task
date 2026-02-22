@@ -4,6 +4,7 @@ metadata:
   name: todoapp
   namespace: todoapp
 spec:
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -20,7 +21,8 @@ spec:
       serviceAccountName: secrets-reader
       containers:
       - name: todoapp
-        image: ikulyk404/todoapp:4.0.1
+        image: todoapp:fix-import
+        imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: data
           mountPath: /app/data
