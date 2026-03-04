@@ -5,6 +5,7 @@ metadata:
   namespace: todoapp
   labels:
     app: todoapp
+    monitoring: todoapp-metrics
 spec:
   type: ClusterIP
   selector:

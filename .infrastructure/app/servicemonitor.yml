@@ -8,11 +8,11 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: todoapp
+      monitoring: todoapp-metrics
   namespaceSelector:
     matchNames:
     - todoapp
   endpoints:
-  - port: http
+  - port: metrics
     path: /metrics
     interval: 10s
