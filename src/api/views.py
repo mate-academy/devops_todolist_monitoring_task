@@ -6,7 +6,9 @@ from lists.models import Todo, TodoList
 
 from django.http import HttpResponse
 from django.utils import timezone
-import time
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
+
+from todolist.metrics import HTTP_REQUESTS_TOTAL
 
 startup_time = timezone.now()
 
@@ -74,3 +76,10 @@ def ready(request):
     else:
         # After 30 seconds, return HTTP 200
         return HttpResponse("Readiness OK", content_type="text/plain")
+
+
+def metrics(request):
+    # Initialize label series so they are always present in the export.
+    HTTP_REQUESTS_TOTAL.labels(method="GET")
+    HTTP_REQUESTS_TOTAL.labels(method="POST")
+    return HttpResponse(generate_latest(), content_type=CONTENT_TYPE_LATEST)

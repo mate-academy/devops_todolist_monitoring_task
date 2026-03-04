@@ -1,9 +1,29 @@
 from django.contrib.auth.models import User
+from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from lists.models import TodoList
+
+
+class MetricsTests(TestCase):
+    def test_metrics_endpoint_exists(self):
+        response = self.client.get("/metrics")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn(
+            "text/plain",
+            response["Content-Type"],
+        )
+
+    def test_metrics_contains_get_and_post_series(self):
+        self.client.get("/")
+        self.client.post("/todolist/new/", {"description": "test todo"})
+        response = self.client.get("/metrics")
+
+        content = response.content.decode("utf-8")
+        self.assertIn('todoapp_http_requests_total{method="GET"}', content)
+        self.assertIn('todoapp_http_requests_total{method="POST"}', content)
 
 
 class UserTests(APITestCase):
