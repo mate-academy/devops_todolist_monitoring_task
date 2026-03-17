@@ -1,0 +1,18 @@
+{{- if .Values.serviceMonitor.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: api-service-monitor
+  labels:
+    release: prometheus
+spec:
+  namespaceSelector:
+        any: true
+  selector:
+    matchLabels:
+      app: todoapp
+  endpoints:
+      - port: {{.Values.serviceMonitor.port}}
+        interval: {{.Values.serviceMonitor.interval}}
+        path: {{.Values.serviceMonitor.path}}
+{{- end}}
