@@ -1,0 +1,5 @@
+1. Port-forward the application service:
+   kubectl port-forward svc/{{ include "todoapp.fullname" . }} 8080:{{ .Values.service.port }}
+
+2. Check the metrics endpoint:
+   curl http://127.0.0.1:8080/metrics
