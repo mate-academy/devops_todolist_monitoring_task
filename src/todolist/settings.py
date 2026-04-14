@@ -41,9 +41,12 @@ INSTALLED_APPS = (
     "accounts",
     "rest_framework",
     "api",
+    "django_prometheus",
 )
 
-MIDDLEWARE = (
+MIDDLEWARE = [
+    "django_prometheus.middleware.PrometheusBeforeMiddleware",
+
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -51,7 +54,11 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-)
+
+    "django_prometheus.middleware.PrometheusAfterMiddleware",
+
+    "src.middleware.RequestCountMiddleware",
+]
 
 ROOT_URLCONF = "todolist.urls"
 
@@ -72,8 +79,8 @@ DATABASES = {
         'NAME': DB_NAME,
         'USER': DB_USER,
         'PASSWORD': DB_PASSWORD,
-        'HOST': DB_HOST,  # You can use a different host if your MySQL server is on a remote machine.
-        'PORT': '',  # Leave this empty to use the default MySQL port (3306).
+        'HOST': os.environ.get("DB_HOST", "127.0.0.1"),  # You can use a different host if your MySQL server is on a remote machine.
+        'PORT': '3306',  # Leave this empty to use the default MySQL port (3306).
     }
 }
 

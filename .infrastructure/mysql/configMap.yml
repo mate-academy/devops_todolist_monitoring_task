@@ -7,9 +7,13 @@ metadata:
     app: mysql
 data:
   init.sql: |
+    CREATE DATABASE IF NOT EXISTS app_db;
+    CREATE USER IF NOT EXISTS 'app_user'@'%' IDENTIFIED BY '1234';
     GRANT ALL PRIVILEGES ON app_db.* TO 'app_user'@'%';
+    FLUSH PRIVILEGES;
+    
     USE app_db;
-    CREATE TABLE counter (
+    CREATE TABLE IF NOT EXISTS counter (
         id INT AUTO_INCREMENT PRIMARY KEY,
         value INT
     );
