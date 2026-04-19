@@ -1,0 +1,11 @@
+kube-prometheus-stack/
+kube-prometheus-stack-*.tgz
+node_modules/
+venv/
+.venv/
+dist/
+build/
+*.zip
+*.sql
+.env
+.idea
