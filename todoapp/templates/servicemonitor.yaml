@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: todoapp-service
+  labels:
+    release: kube-prometheus-stack
+    app: todoapp
+spec:
+  selector:
+    app: todoapp
+  ports:
+    - name: metrics
+      port: 8080
+      targetPort: 8080
+---
+# 2. ServiceMonitor
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: todoapp-monitor
+  labels:
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: todoapp
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 10s
