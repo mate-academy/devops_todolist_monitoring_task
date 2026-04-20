@@ -1,0 +1,16 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local database and logs
+*.sqlite3
+db.sqlite3
+*.log
+
+# Downloaded Helm chart artifacts
+kube-prometheus-stack/

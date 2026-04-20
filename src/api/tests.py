@@ -217,3 +217,22 @@ class TodoTests(APITestCase):
         # get todolist and expect 404
         get_response = self.client.get(f"/api/todos/{todo_id}/")
         self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class MetricsTests(APITestCase):
+    def test_metrics_endpoint_exposes_get_and_post(self):
+        self.client.get("/")
+        self.client.post("/api/todolists/", {"title": "metric-test", "todos": []}, format="json")
+
+        response = self.client.get("/metrics")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response["Content-Type"].split(";")[0],
+            "text/plain",
+        )
+
+        content = response.content.decode("utf-8")
+        self.assertIn('todoapp_http_requests_total{method="GET"}', content)
+        self.assertIn('todoapp_http_requests_total{method="POST"}', content)
+        self.assertIn("todoapp_http_requests_counters_created", content)

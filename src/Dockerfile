@@ -4,6 +4,9 @@ FROM python:${PYTHON_VERSION} as builder
 
 # Set the working directory
 WORKDIR /app
+COPY requirements.txt ./
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
 COPY . .
 
 # Stage 2: Run Stage
@@ -13,10 +16,8 @@ WORKDIR /app
 
 ENV PYTHONUNBUFFERED=1
 
+COPY --from=builder /usr/local /usr/local
 COPY --from=builder /app .
-
-RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
 
 EXPOSE 8080
 

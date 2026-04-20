@@ -1,0 +1,6 @@
+apiVersion: v2
+name: todoapp
+description: Helm chart for the Django ToDo app with Prometheus scraping.
+type: application
+version: 0.1.0
+appVersion: "4.0.1"
