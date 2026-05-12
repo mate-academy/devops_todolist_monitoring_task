@@ -5,6 +5,7 @@ from lists import views
 app_name = "lists"
 urlpatterns = [
     path("", views.index, name="index"),
+    path("metrics", views.metrics, name="metrics"),
     path("todolist/<int:todolist_id>/", views.todolist, name="todolist"),
     path("todolist/new/", views.new_todolist, name="new_todolist"),
     path("todolist/add/", views.add_todolist, name="add_todolist"),

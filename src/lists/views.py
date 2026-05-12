@@ -4,13 +4,25 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from lists.forms import TodoForm, TodoListForm
 from lists.models import Todo, TodoList
+from prometheus_client import Counter, generate_latest
+from django.http import HttpResponse
+
+
+
+REQUEST_COUNT = Counter('http_requests_total', 'Total HTTP requests', ['method'])
+def metrics(request):
+    REQUEST_COUNT.labels(method=request.method).inc()
+    return HttpResponse(generate_latest(), content_type='text/plain')
+
 
 
 def index(request):
+    REQUEST_COUNT.labels(method=request.method).inc()
     return render(request, "lists/index.html", {"form": TodoForm()})
 
 
 def todolist(request, todolist_id):
+    REQUEST_COUNT.labels(method=request.method).inc()
     todolist = get_object_or_404(TodoList, pk=todolist_id)
     if request.method == "POST":
         redirect("lists:add_todo", todolist_id=todolist_id)
@@ -21,6 +33,7 @@ def todolist(request, todolist_id):
 
 
 def add_todo(request, todolist_id):
+    REQUEST_COUNT.labels(method=request.method).inc()
     if request.method == "POST":
         form = TodoForm(request.POST)
         if form.is_valid():
@@ -40,6 +53,7 @@ def add_todo(request, todolist_id):
 
 @login_required
 def overview(request):
+    REQUEST_COUNT.labels(method=request.method).inc()
     if request.method == "POST":
         return redirect("lists:add_todolist")
     return render(request, "lists/overview.html", {"form": TodoListForm()})
@@ -47,6 +61,7 @@ def overview(request):
 
 def new_todolist(request):
     if request.method == "POST":
+        REQUEST_COUNT.labels(method=request.method).inc()
         form = TodoForm(request.POST)
         if form.is_valid():
             # create default todolist
@@ -68,6 +83,7 @@ def new_todolist(request):
 
 def add_todolist(request):
     if request.method == "POST":
+        REQUEST_COUNT.labels(method=request.method).inc()
         form = TodoListForm(request.POST)
         if form.is_valid():
             user = request.user if request.user.is_authenticated else None
