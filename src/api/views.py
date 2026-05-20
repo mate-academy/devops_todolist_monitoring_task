@@ -8,6 +8,8 @@ from django.http import HttpResponse
 from django.utils import timezone
 import time
 
+from prometheus_client import generate_latest
+
 startup_time = timezone.now()
 
 class IsCreatorOrReadOnly(permissions.BasePermission):
@@ -74,3 +76,9 @@ def ready(request):
     else:
         # After 30 seconds, return HTTP 200
         return HttpResponse("Readiness OK", content_type="text/plain")
+
+def metrics(request):
+    return HttpResponse(
+        generate_latest(),
+        content_type="text/plain"
+    )
