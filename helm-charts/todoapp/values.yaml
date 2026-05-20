@@ -1,0 +1,8 @@
+serviceMonitor:
+  enabled: true
+  labels:
+    release: prometheus-stack
+  interval: 10s
+  path: /metrics
+  port: http
+ ### 
