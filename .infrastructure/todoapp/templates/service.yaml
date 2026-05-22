@@ -1,0 +1,23 @@
+# Step 8: Service configuration with metrics port
+# This service exposes the application and its /metrics endpoint
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-service
+  labels:
+    app: {{ .Chart.Name }}
+    # Include ServiceMonitor labels so Prometheus can discover this service
+    {{- if .Values.serviceMonitor.enabled }}
+    {{- with .Values.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  - port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.targetPort }}
+    protocol: TCP
+    name: {{ .Values.service.name }}
+  selector:
+    app: {{ .Chart.Name }}

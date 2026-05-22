@@ -1,0 +1,42 @@
+replicaCount: 1
+
+image:
+  repository: todoapp
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+  name: http
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+env:
+  - name: SECRET_KEY
+    value: "your-secret-key-here"
+  - name: DB_NAME
+    value: "app_db"
+  - name: DB_USER
+    value: "app_user"
+  - name: DB_PASSWORD
+    value: "1234"
+  - name: DB_HOST
+    value: "mysql.mysql.svc.cluster.local"
+
+# Step 7: ServiceMonitor configuration for Prometheus integration
+# This configuration enables Prometheus to scrape metrics from the /metrics endpoint
+serviceMonitor:
+  enabled: true  # Enable ServiceMonitor creation
+  labels:
+    release: kube-prometheus-stack  # Label required for kube-prometheus-stack to discover this ServiceMonitor
+  interval: 10s  # Scrape metrics every 10 seconds
+  path: /metrics  # Path where metrics are exposed (created in Step 2)
+  port: http  # Port name to scrape (matches service.name)

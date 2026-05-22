@@ -1,0 +1,24 @@
+# Step 8: ServiceMonitor resource for Prometheus
+# This file creates a ServiceMonitor that tells Prometheus how to scrape metrics from the todoapp
+{{- if .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Chart.Name }}-servicemonitor
+  labels:
+    app: {{ .Chart.Name }}
+    # Include labels from values.yaml (e.g., release: kube-prometheus-stack)
+    {{- with .Values.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  # Select services with matching labels
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  # Configure the endpoint to scrape
+  endpoints:
+  - port: {{ .Values.serviceMonitor.port }}  # Port name from service definition
+    path: {{ .Values.serviceMonitor.path }}  # Metrics endpoint path (/metrics)
+    interval: {{ .Values.serviceMonitor.interval }}  # How often to scrape (10s)
+{{- end }}
