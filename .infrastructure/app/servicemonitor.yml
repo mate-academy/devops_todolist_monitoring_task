@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: todoapp-servicemonitor
+  namespace: todoapp # Має бути той самий простір імен, що й додаток
+  labels:
+    # Ці лейбли використовуються Prometheus Operator для виявлення ServiceMonitor'ів.
+    # Зазвичай це лейбл `release`, який Prometheus Helm chart використовує для своїх компонентів.
+    release: kube-prometheus-stack # <-- Заміни на правильний лейбл, якщо він відрізняється у твоєму стеку
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: todoapp # <--- Має співпадати з лейблом в todoapp-service
+      app.kubernetes.io/component: web # <--- Має співпадати з лейблом в todoapp-service
+  endpoints:
+  - port: http-metrics # <--- Обов'язково використовуємо іменований порт із Service (todoapp-service)
+    path: /metrics # <--- Шлях до метрик у твоєму Django додатку
+    interval: 10s # Частота скрапінгу метрик

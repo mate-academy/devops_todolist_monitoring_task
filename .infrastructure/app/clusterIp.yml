@@ -3,6 +3,10 @@ kind: Service
 metadata:
   name: todoapp-service
   namespace: todoapp
+  labels: # <-- Додаємо лейбли для ServiceMonitor
+    app.kubernetes.io/name: todoapp
+    app.kubernetes.io/component: web
+    release: kube-prometheus-stack
 spec:
   type: ClusterIP
   selector:
@@ -11,3 +15,4 @@ spec:
   - protocol: TCP
     port: 80
     targetPort: 8080
+    name: http-metrics # <---  Додаємо іменований порт
