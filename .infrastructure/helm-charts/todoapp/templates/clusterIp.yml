@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: todoapp-service
+  namespace: todoapp
+  labels:
+    job: todoapp-api
+    app: service-todoapp
+spec:
+  type: ClusterIP
+  selector:
+    app: todoapp
+  ports:
+  - protocol: TCP
+    name: http
+    port: 80
+    targetPort: 8080
