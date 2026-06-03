@@ -1,0 +1,20 @@
+{{- if eq .Values.serviceMonitor.enabled true }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+    name: api-service-monitor
+    namespace: todoapp
+    labels:
+        {{- range $key, $value := .Values.serviceMonitor.labels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+spec:
+    jobLabel: job
+    endpoints:
+        - interval: {{.Values.serviceMonitor.interval}}
+          port: {{.Values.serviceMonitor.port}}
+          path: {{.Values.serviceMonitor.path}}
+    selector:
+        matchLabels:
+            app: service-todoapp
+{{- end }}
