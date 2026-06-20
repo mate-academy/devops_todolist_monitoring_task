@@ -1,0 +1,57 @@
+replicaCount: 2
+
+image:
+  repository: todoapp
+  tag: metrics
+  pullPolicy: IfNotPresent
+
+containerPort: 8080
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 8080
+  portName: http
+  nodePort: 30007
+
+serviceMonitor:
+  enabled: true
+  labels: {}
+  interval: 10s
+  path: /metrics
+  port: http
+
+db:
+  name: app_db
+  user: app_user
+  password: "1234"
+  host: mysql-0.mysql.mysql.svc.cluster.local
+
+secretKey: "@e2(yx)v&tgh3_s=0yja-i!dpebxsz^dg47x)-k&kq_3zf*9e*"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 250m
+    memory: 512Mi
+
+livenessProbe:
+  httpGet:
+    path: /api/health
+    port: 8080
+  initialDelaySeconds: 60
+  periodSeconds: 5
+
+readinessProbe:
+  httpGet:
+    path: /api/ready
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+nodeAffinity:
+  enabled: true
+  key: app
+  value: todoapp

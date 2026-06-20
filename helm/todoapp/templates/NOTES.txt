@@ -1,0 +1,12 @@
+{{ .Chart.Name }} has been deployed to namespace "{{ .Release.Namespace }}".
+
+App (NodePort):   http://localhost:{{ .Values.service.nodePort }}/
+Metrics endpoint: http://localhost:{{ .Values.service.nodePort }}/metrics
+
+The ServiceMonitor "{{ include "todoapp.fullname" . }}-service-monitor" tells the
+kube-prometheus-stack to scrape {{ .Values.serviceMonitor.path }} every
+{{ .Values.serviceMonitor.interval }} on port "{{ .Values.serviceMonitor.port }}".
+
+Check the scrape target in Prometheus:
+  kubectl -n monitoring port-forward svc/kube-prometheus-stack-prometheus 9090:9090
+  open http://localhost:9090/targets
