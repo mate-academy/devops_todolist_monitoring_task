@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-{{ .Values.todoapp.names.todoappname }}-service
+  namespace: {{ .Values.todoapp.namespace.name }}
+  labels:
+    app: {{ .Values.todoapp.names.todoappname }}
+spec:
+  selector:
+    app: {{ .Values.todoapp.names.todoappname }}
+  ports:
+    - port: 80
+      targetPort: 8080
+      name: http

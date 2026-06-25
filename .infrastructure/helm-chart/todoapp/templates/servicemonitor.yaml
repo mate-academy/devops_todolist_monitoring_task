@@ -1,0 +1,17 @@
+{{- if .Values.todoapp.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Chart.Name }}-{{ .Values.todoapp.names.todoappname }}-monitor
+  namespace: {{ .Values.todoapp.namespace.name }}
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.todoapp.names.todoappname }}
+  endpoints:
+    - port: {{ .Values.todoapp.serviceMonitor.port }}
+      path: {{ .Values.todoapp.serviceMonitor.path }}
+      interval: {{ .Values.todoapp.serviceMonitor.interval }}
+{{- end }}

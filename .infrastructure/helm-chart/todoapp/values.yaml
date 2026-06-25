@@ -1,0 +1,59 @@
+todoapp:
+  names:
+    todoappname: todoapp
+    todoapp_label: todoapp
+    todoapp_service: todoapp-service
+    app_config: app-config
+    app_secret: app-secret
+    pv_data: pv-data
+    pvc_data: pvc-data
+
+  namespace:
+    name: todoapp
+
+  image:
+    name: todoapp
+    repository: foxytail8/todoapp
+    version: latest
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "150m"
+    limits:
+      memory: "256Mi"
+      cpu: "150m"
+
+  data:
+    SECRET_KEY: "@e2(yx)v&tgh3_s=0yja-h!dpebxsz^dg47x)-k&kq_3zf*9e*"
+    DB_NAME: "app_db"
+    DB_USER: "app_user"
+    DB_PASSWORD: "1234"
+    DB_HOST: "mysql-mysql.mysql.svc.cluster.local"
+
+  rollup:
+    maxSurge: 1
+    maxUnavailable: 1
+  hpa:
+    minReplicas: 2
+    maxReplicas: 4
+    cpu:
+      averageUtilization: 70
+    memory:
+      averageUtilization: 70
+
+  storage:
+    capacity:
+      storage: 1Gi
+    requests:
+      storage: 1Gi
+
+  rbac:
+    name: secrets-reader
+
+  serviceMonitor:
+    enabled: true
+    labels: {}
+    interval: 10s
+    path: /metrics
+    port: http

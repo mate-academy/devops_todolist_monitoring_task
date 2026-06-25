@@ -9,7 +9,10 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+
 import os
+
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -51,6 +54,7 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'todolist.views.MetricsMiddleware',
 )
 
 ROOT_URLCONF = "todolist.urls"
