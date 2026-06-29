@@ -1,0 +1,59 @@
+namespaceName: "todoapp"
+
+ServiceAccountName: secrets-reader
+
+secret:
+  SECRET_KEY: QGUyKHl4KXYmdGdoM19zPTB5amEtaSFkcGVieHN6XmRnNDd4KS1rJmtxXzN6Zio5ZSoK
+  DB_NAME: "YXBwX2RiCg=="
+  DB_USER: "YXBwX3VzZXI="
+  DB_PASSWORD: "MTIzNA=="
+  DB_HOST: "bXlzcWwtbXlzcWwtc2VydmljZS5teXNxbC5zdmMuY2x1c3Rlci5sb2NhbA=="
+
+resources:
+  requests:
+    cpu: "150m"
+    memory: "256Mi"
+  limits:
+    cpu: "150m"
+    memory: "256Mi"
+
+strategy:
+  RollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+
+container:
+  image:
+    repository: todoapp
+    tag: v3
+  affinity:
+    weight: 1
+    key: app
+    values: kube2py
+
+hpa:
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    cpu:
+      name: cpu
+      averageUtilization: 70
+    memory:
+      name: memory
+      averageUtilization: 70
+
+pv:
+  capacity:
+    storage: 1Gi
+
+pvc:
+  requests:
+    storage: 1Gi
+
+serviceMonitor:
+  enabled: true
+  labels:
+    release: kube-prometheus-stack
+  interval: 10s
+  path: /metrics/
+  port: http

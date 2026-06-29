@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from lists.forms import TodoForm, TodoListForm
 from lists.models import Todo, TodoList
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 
 
 def index(request):
@@ -78,3 +79,7 @@ def add_todolist(request):
             return render(request, "lists/overview.html", {"form": form})
 
     return redirect("lists:index")
+
+def metric_view(request):
+    metrics_data = generate_latest()
+    return HttpResponse(metrics_data, content_type=CONTENT_TYPE_LATEST)
