@@ -34,7 +34,7 @@ Follow the steps below to complete the task:
 
 1. Fork the repository to your GitHub account.
 
-2. Expose `/metrics` endpoint:
+2. Create a new `/metrics` endpoint (not `api/metrics`):
    - Modify the application code to include a `/metrics` endpoint.
    - Ensure it returns the number of GET and POST requests in a Prometheus-compatible format.
 
@@ -45,58 +45,70 @@ Follow the steps below to complete the task:
 4. Cluster setup:
    - Use `kind` to spin up a cluster from a `cluster.yml` configuration file.
 
-5. Install Prometheus:
-   - Install [Prometheus](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) on the cluster using the provided Helm chart.
+5. Pull the kube-prometheus-stack:
+   - [Prometheus](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
+   ```bash
+   helm pull prometheus-community/kube-prometheus-stack --version <version_number> --untar
+   ```
 
-6. Configure Helm Chart:
-   - Update the `values.yaml` file in the `todoapp` Helm chart:
-   * Add a new section for the `ServiceMonitor` configuration:
-     ```yaml
-     serviceMonitor:
-         enabled: true
-         labels: {}
-         interval: 10s
-         path: /metrics
-         port: http
-     ```
-   - Create a new file named `servicemonitor.yaml` in the Helm chart's templates directory.
-   - Ensure the app's `service.yaml` exposes the metrics port and has the necessary labels for the ServiceMonitor.
+6. Install the kube-prometheus-stack Helm chart:
+   ```bash
+   helm install kube-prometheus-stack ./kube-prometheus-stack
+   ```
+    * **Note**: If you encounter issues deploying on Ubuntu, particularly related to the admission controller, find the `admissionWebhooks` section in the `values.yaml` and set:
+   ```yaml
+   admissionWebhooks:
+     enabled: false
+   ```
 
-7. Apply Helm Chart:
+7. Modify the `values.yaml` file in the `todoapp` Helm chart:
+   ```yaml
+      serviceMonitor:
+        enabled: true
+        labels: {}
+        interval: 10s
+        path: /metrics
+        port: http
+    ```
+
+8. Configure your `todoapp` Helm chart:
+   - In the Helm chart's templates directory, create a new file named `servicemonitor.yaml` with the necessary configuration.
+   - Ensure your app's `service.yaml` exposes the metrics port and has the necessary labels for the ServiceMonitor to select.
+   - Perform port forwarding to your application service to expose the metrics endpoint:
+      ```bash
+      kubectl port-forward svc/<your-service-name> 8080:<app-port>
+      ```
+9. Apply Helm Chart:
    - Apply the Helm chart to the cluster.
    - Verify that the ServiceMonitor has been created.
 
-8. Verify Prometheus scraping:
+10. Verify Prometheus scraping:
    - Check Prometheus dashboard for the target status to ensure it's scraping metrics from the `todoapp`.
 
-9. Create Grafana dashboard:
+11. Create Grafana dashboard:
    - Open the Grafana UI and click on the **+** icon in the sidebar to create a new dashboard.
    - Click **Add new panel** to start configuring your first metric visualization.
 
-10. Visualize total HTTP requests:
+12. Visualize total HTTP requests:
     - Set up a panel titled **Total HTTP Requests**.
     - Use the query to visualize the total number of HTTP requests:
         ```
-        sum(rate(django_http_requests_total[5m])) by (method)
+        sum(rate(<your_custom_metric>[5m])) by (method)
         ```
     - This query will show the rate of HTTP requests per second, averaged over the past 5 minutes, broken down by method (GET or POST).
     - Choose a visualization type such as Graph, Bar Gauge, or Stat to represent this data.
 
-11. Visualize HTTP requests creation time:
+13. Visualize HTTP requests creation time:
     - Add a panel titled **HTTP Requests Creation Time**.
     - Use the query to visualize the creation time of the requests:
         ```
-        django_http_requests_created
+        <your_custom_metric>
         ```
     - This metric represents the time when the HTTP request counters were created or reset, which can be useful for identifying when the application was restarted.
     - Choose a Singlestat or Stat visualization for this metric.
 
-12. Customize panel settings:
+14. Customize panel settings:
     - Adjust panel settings such as axes, legend, and thresholds as desired.
     - Utilize Grafana’s functions for formatting the display.
 
-13. Save and share dashboard:
-    - Save the configured dashboard.
-    - Export the dashboard JSON for version control and sharing.
-
-14. Submit a PR with your changes for validation on the specified platform.
+14. Submit a PR with your changes and attach screenshots of your Grafana dashboard for validation on the specified platform.
