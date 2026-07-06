@@ -18,7 +18,7 @@ kubeadmConfigPatchesJSON6902:
     - op: add
       path: /apiServer/certSANs/-
       value: my-hostname
-# 2 control plane node and 2 workers
+# One control-plane node and four workers
 nodes:
 # the control plane node config
 - role: control-plane
@@ -42,7 +42,7 @@ nodes:
   - containerPort: 443
     hostPort: 443
     protocol: TCP
-# the two workers
+# MySQL worker
 - role: worker
   extraMounts:
     - hostPath: /tmp
@@ -55,6 +55,7 @@ nodes:
       containerPath: /data
   labels:
     app: mysql
+# Todo application worker
 - role: worker
   extraMounts:
     - hostPath: /tmp
@@ -67,13 +68,3 @@ nodes:
       containerPath: /data
   labels:
     app: todoapp
-- role: worker
-  extraMounts:
-    - hostPath: /tmp
-      containerPath: /data
-  labels:
-    app: todoapp
-- role: worker
-  extraMounts:
-    - hostPath: /tmp
-      containerPath: /data

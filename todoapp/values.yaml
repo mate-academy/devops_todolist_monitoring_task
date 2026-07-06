@@ -1,0 +1,29 @@
+replicaCount: 1
+
+image:
+  repository: todoapp
+  tag: local
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+database:
+ name: todolist
+ user: todoapp
+ password: todoapp_local_password
+ rootPassword: root_local_password
+
+mysql:
+  image: mysql:8.4
+
+serviceMonitor:
+  enabled: true
+  labels:
+    release: kube-prometheus-stack
+  interval: 10s
+  path: /metrics
+  port: http
+  
