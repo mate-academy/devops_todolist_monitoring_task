@@ -16,9 +16,9 @@ ENV PYTHONUNBUFFERED=1
 COPY --from=builder /app .
 
 RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
+    pip install -r src/requirements.txt
 
 EXPOSE 8080
 
 # Run database migrations and start the Django application
-ENTRYPOINT ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8080"]
+ENTRYPOINT ["sh", "-c", "python src/manage.py migrate && python src/manage.py runserver 0.0.0.0:8080"]
