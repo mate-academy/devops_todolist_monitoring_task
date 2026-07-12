@@ -1,13 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: todoapp-service
+  name: todoapp-nodeport
   namespace: todoapp
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: todoapp
   ports:
   - protocol: TCP
     port: 80
     targetPort: 8080
+    nodePort: 30007

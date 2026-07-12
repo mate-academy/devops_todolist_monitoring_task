@@ -15,12 +15,13 @@ spec:
   template:
     metadata:
       labels:
+        job: todoapp-api
         app: todoapp
     spec:
       serviceAccountName: secrets-reader
       containers:
       - name: todoapp
-        image: ikulyk404/todoapp:4.0.1
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         volumeMounts:
         - name: data
           mountPath: /app/data

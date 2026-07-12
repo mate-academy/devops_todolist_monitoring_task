@@ -1,0 +1,17 @@
+common:
+  app_label: todoapp
+
+image:
+  repository: andriis9/todoapp
+  tag: test1.3
+
+serviceMonitor:
+  enabled: true
+  labels: {
+    release: prometheus,
+    app: prometheus
+  }
+  jobLabel: job
+  path: /metrics
+  interval: 10s
+  port: http
