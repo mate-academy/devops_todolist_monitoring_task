@@ -1,0 +1,35 @@
+replicaCount: 1
+image:
+  repository: dianahorban/todoapp
+  pullPolicy: Always
+  tag: "v1"
+service:
+  type: ClusterIP
+  port: 8000
+  targetPort: 8000
+serviceMonitor:
+  enabled: true
+  labels:
+    release: kube-prometheus-stack
+  interval: 10s
+  path: /metrics
+  port: http
+ingress:
+  enabled: false
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 200m
+    memory: 128Mi
+
+env:
+  SECRET_KEY: "django-insecure-k8s-local-key-12345"
+  DEBUG: "False"
+  DJANGO_SETTINGS_MODULE: "todolist.settings"
+  DB_HOST: "localhost"
+  DB_PORT: "3306"
+  DB_NAME: "todo_db"
+  DB_USER: "root"
+  DB_PASSWORD: "12345"
