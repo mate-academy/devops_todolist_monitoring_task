@@ -1,0 +1,22 @@
+{{- if .Values.todoapp.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: observability
+  labels:
+{{ toYaml .Values.todoapp.serviceMonitor.labels | indent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+
+  namespaceSelector:
+    matchNames:
+      - {{ .Values.common.namespace }}
+
+  endpoints:
+    - port: {{ .Values.todoapp.serviceMonitor.port }}
+      path: {{ .Values.todoapp.serviceMonitor.path }}
+      interval: {{ .Values.todoapp.serviceMonitor.interval }}
+{{- end }}

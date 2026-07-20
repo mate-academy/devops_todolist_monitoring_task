@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: mysql
-  replicas: 2
+  replicas: 1
   serviceName: mysql
   template:
     metadata:
@@ -79,14 +79,6 @@ spec:
                     values:
                     - mysql
               topologyKey: "kubernetes.io/hostname"
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: "app"
-                    operator: In
-                    values:
-                    - "mysql"
   volumeClaimTemplates:
   - metadata:
       name: data

@@ -1,0 +1,28 @@
+prometheusOperator:
+  enabled: true
+  admissionWebhooks:
+    enabled: false
+
+prometheus:
+  enabled: true
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+
+grafana:
+  enabled: true
+
+alertmanager:
+  enabled: false
+
+nodeExporter:
+  enabled: false
+
+kubeStateMetrics:
+  enabled: false
+
+prometheus-node-exporter:
+  enabled: false
+
+defaultRules:
+  create: false
