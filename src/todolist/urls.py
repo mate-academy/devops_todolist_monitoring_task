@@ -1,7 +1,9 @@
 from django.contrib import admin
 from django.urls import include, path
+from todolist import views
 
 urlpatterns = [
+    path("metrics", views.metrics, name="metrics"),
     path("", include("lists.urls")),
     path("auth/", include("accounts.urls")),
     path("api/", include("api.urls")),

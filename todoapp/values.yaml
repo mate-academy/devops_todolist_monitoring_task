@@ -1,0 +1,46 @@
+replicaCount: 1
+
+image:
+  repository: todoapp-metrics
+  tag: test
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+serviceMonitor:
+  enabled: true
+  labels: {}
+  interval: 10s
+  path: /metrics
+  port: http
+
+existingConfigMap: app-config
+existingSecret: app-secret
+
+persistence:
+  existingClaim: pvc-data
+  mountPath: /app/data
+
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 150m
+  limits:
+    memory: 256Mi
+    cpu: 150m
+
+nodeSelector:
+  app: todoapp
+
+probes:
+  liveness:
+    path: /api/health
+    initialDelaySeconds: 60
+    periodSeconds: 5
+  readiness:
+    path: /api/ready
+    initialDelaySeconds: 5
+    periodSeconds: 5
