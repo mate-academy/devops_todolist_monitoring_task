@@ -20,7 +20,8 @@ spec:
       serviceAccountName: secrets-reader
       containers:
       - name: todoapp
-        image: ikulyk404/todoapp:4.0.1
+        image: todoapp-metrics:test
+        imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: data
           mountPath: /app/data
@@ -69,16 +70,17 @@ spec:
               name: app-secret
               key: DB_HOST
         ports:
-        - containerPort: 8080
+          - name: http
+            containerPort: 8080
         livenessProbe:
           httpGet:
-            path: api/health
+            path: /api/health
             port: 8080
           initialDelaySeconds: 60
           periodSeconds: 5
         readinessProbe:
           httpGet:
-            path: api/ready
+            path: /api/ready
             port: 8080
           initialDelaySeconds: 5
           periodSeconds: 5
@@ -101,4 +103,4 @@ spec:
               - key: app
                 operator: In
                 values:
-                - kube2py
+                - todoapp
