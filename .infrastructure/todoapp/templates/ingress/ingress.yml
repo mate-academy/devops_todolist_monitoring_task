@@ -13,6 +13,6 @@ spec:
         path: /(|$)(.*)
         backend:
           service:
-            name: {{ .Chart.Name }}-service
+            name: {{ .Chart.Name }}-clusterip
             port:
               number: 80
