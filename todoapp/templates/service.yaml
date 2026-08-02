@@ -1,0 +1,20 @@
+{{- if .Values.todoapp.service.enabled}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: todoapp-service
+  namespace: {{.Values.common.namespace}}
+  labels:
+  {{- range $k, $v := .Values.todoapp.service.tags}}
+    {{$k}}: {{$v}}
+  {{- end}}
+spec:
+  type: ClusterIP
+  selector:
+    app: todoapp
+  ports:
+  - name: {{.Values.todoapp.service.port.name}}
+    protocol: {{.Values.todoapp.service.port.protocol}}
+    port: {{.Values.todoapp.service.port.port}}
+    targetPort: {{.Values.todoapp.service.port.targetPort}}
+{{- end}}
