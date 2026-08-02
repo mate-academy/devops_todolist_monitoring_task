@@ -1,0 +1,21 @@
+{{- if .Values.todoapp.serviceMonitor.enabled}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: todoapp-servicemonitor
+  namespace: {{ .Values.common.namespace}}
+  labels:
+    app: todoapp
+    release: kube-prometheus-stack
+spec:
+  jobLabel: {{.Values.todoapp.serviceMonitor.jobLabel}}
+  endpoints:
+    - interval: {{.Values.todoapp.serviceMonitor.interval}}
+      port: {{.Values.todoapp.serviceMonitor.port}}
+      path: {{.Values.todoapp.serviceMonitor.path}}
+  selector:
+    matchLabels:
+    {{- range $k, $v := .Values.todoapp.serviceMonitor.labels}}
+      {{$k}}: {{$v}}
+    {{- end}}
+{{- end}}
