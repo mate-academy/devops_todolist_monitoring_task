@@ -1,0 +1,64 @@
+common:
+  namespace: todoapp
+
+todoapp:
+  serviceAccountName: secrets-reader
+
+  strategy:
+    type: RollingUpdate
+    maxSurge: 1
+    maxUnavailable: 1
+
+  image:
+    name: todoapp
+    repository: olehkovalievskyi/todoapp
+    version: 4.0.0
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "150m"
+    limits:
+      memory: "256Mi"
+      cpu: "150m"
+
+  secrets:
+    SECRET_KEY: "@e2(yx)v&tgh3_s=0yja-i!dpebxsz^dg47x)-k&kq_3zf*9e*"
+    DB_HOST: "mysql-0.mysql.mysql.svc.cluster.local"
+    DB_NAME: "app_db"
+    DB_USER: "app_user"
+    DB_PASSWORD: "1234"
+
+  hpa:
+    minReplicas: 2
+    maxReplicas: 5
+    cpu:
+      averageUtilization: 70
+    memory:
+      averageUtilization: 70
+
+  pv:
+    capacity:
+      storage: 1Gi
+
+  pvc:
+    requests:
+      storage: 1Gi
+
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - todoapp
+
+  serviceMonitor:
+    enabled: true
+    labels: {}
+    interval: 10s
+    path: /metrics
+    port: http

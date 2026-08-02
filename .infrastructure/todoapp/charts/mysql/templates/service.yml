@@ -1,0 +1,17 @@
+# Headless service for stable DNS entries of StatefulSet members.
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Values.mysql.namespace }}
+spec:
+  selector:
+    app: {{ .Chart.Name }}
+  ports:
+  - name: {{ .Chart.Name }}
+    port: 3306
+  clusterIP: None
+
+# pod-name.service-name.namespace.svc.cluster.local
+# pod-name.service-name
+# mysql-0.mysql.mysql.svc.cluster.local
