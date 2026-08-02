@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-config
+  namespace: {{ .Values.mysql.namespace }}
+  labels:
+    app: {{ .Chart.Name }}
+data:
+  init.sql: |
+    GRANT ALL PRIVILEGES ON {{ .Values.mysql.secrets.MYSQL_DATABASE_NAME }}.* TO '{{ .Values.mysql.secrets.MYSQL_USER }}'@'%';
+    USE {{ .Values.mysql.secrets.MYSQL_DATABASE_NAME }};
+    CREATE TABLE counter (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        value INT
+    );
