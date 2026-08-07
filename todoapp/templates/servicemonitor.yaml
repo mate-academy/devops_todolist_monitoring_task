@@ -12,7 +12,6 @@ spec:
     - interval: {{ .Values.todoapp.serviceMonitor.interval }}
       port: {{ .Values.todoapp.serviceMonitor.port}}
       path: {{ .Values.todoapp.serviceMonitor.path }}
-      targetPort: 8080
   selector:
     matchLabels:
       app: {{ .Chart.Name }}
