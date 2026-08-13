@@ -1,6 +1,11 @@
 service:
   type: ClusterIP
   port: 8080
+  labels:
+    release: kube-prometheus-stack
+
+database:
+  host: mysql-0.mysql.mysql.svc.cluster.local
 
 autoscaling:
   enabled: false

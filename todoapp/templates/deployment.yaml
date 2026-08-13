@@ -79,7 +79,7 @@ spec:
                   key: SECRET_KEY
 
             - name: DB_HOST
-              value: mysql-0.mysql.mysql.svc.cluster.local
+              value: {{ .Values.database.host | quote }}
 
           {{- with .Values.livenessProbe }}
           livenessProbe:
