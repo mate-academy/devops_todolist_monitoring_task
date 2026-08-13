@@ -1,0 +1,27 @@
+service:
+  type: ClusterIP
+  port: 8080
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+
+serviceAccount:
+  create: false
+  automount: true
+  annotations: {}
+  name: ""
+
+image:
+  repository: todoapp
+  pullPolicy: IfNotPresent
+  tag: latest
+
+serviceMonitor:
+  enabled: true
+  labels: {}
+  interval: 10s
+  path: /metrics
+  port: http
