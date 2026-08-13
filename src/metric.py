@@ -1,25 +1,29 @@
-from prometheus_client import Counter, CONTENT_TYPE_LATEST, generate_latest
-from django.http import HttpResponse
+from prometheus_client import Counter, Histogram, Gauge
+import time
 
-REQUEST_COUNT = Counter(
-    "http_requests_total",
-    "Total number of HTTP requests",
-    ["method"],
+# Лічильник запитів
+request_count = Counter(
+    'todoapp_requests_total',
+    'Total number of requests',
+    ['method', 'endpoint', 'status']
 )
 
+# Час виконання запиту
+request_duration = Histogram(
+    'todoapp_request_duration_seconds',
+    'Request duration in seconds',
+    ['method', 'endpoint']
+)
 
-class PrometheusMetricsMiddleware:
-    """Рахує тільки GET і POST запити, як вимагає завдання."""
+# Активні подання
+active_tasks = Gauge(
+    'todoapp_active_tasks',
+    'Number of active tasks'
+)
 
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
-        response = self.get_response(request)
-        if request.method in ("GET", "POST"):
-            REQUEST_COUNT.labels(method=request.method).inc()
-        return response
-
-
-def metrics_view(request):
-    return HttpResponse(generate_latest(), content_type=CONTENT_TYPE_LATEST)
+# Помилки
+errors = Counter(
+    'todoapp_errors_total',
+    'Total number of errors',
+    ['error_type']
+)

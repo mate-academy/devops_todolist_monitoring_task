@@ -1,38 +1,26 @@
-namespace: todoapp
-
 replicaCount: 2
 
 image:
   repository: todoapp
-  tag: metrics
+  tag: latest
   pullPolicy: IfNotPresent
-
-serviceAccountName: secrets-reader
 
 service:
   type: ClusterIP
-  port: 80
-  targetPort: 8080
+  port: 8000
+  targetPort: 8000
 
 resources:
-  requests:
-    memory: "256Mi"
-    cpu: "150m"
   limits:
-    memory: "256Mi"
-    cpu: "150m"
-
-hpa:
-  enabled: true
-  minReplicas: 2
-  maxReplicas: 5
-  targetCPUUtilizationPercentage: 70
-  targetMemoryUtilizationPercentage: 70
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
 
 serviceMonitor:
   enabled: true
-  labels:
-    release: prometheus
+  labels: {}
   interval: 10s
   path: /metrics
   port: http

@@ -126,3 +126,4 @@ TEMPLATES = [
         },
     },
 ]
+PROMETHEUS_METRICS_ENABLED = True

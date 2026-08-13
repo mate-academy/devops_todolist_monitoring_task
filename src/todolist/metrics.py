@@ -1,22 +1,20 @@
-from prometheus_client import CONTENT_TYPE_LATEST, Counter, generate_latest
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 from django.http import HttpResponse
-
-REQUEST_COUNT = Counter(
-    "django_http_requests_total",
-    "Total number of HTTP requests",
-    ["method"],
+from metric import (
+    request_count, request_duration, 
+    active_tasks, errors
 )
 
+def metrics(request):
+    """Prometheus metrics endpoint"""
+    return HttpResponse(
+        generate_latest(),
+        content_type=CONTENT_TYPE_LATEST
+    )
 
-class PrometheusMetricsMiddleware:
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
-        response = self.get_response(request)
-        REQUEST_COUNT.labels(method=request.method).inc()
-        return response
-
-
-def metrics_view(request):
-    return HttpResponse(generate_latest(), content_type=CONTENT_TYPE_LATEST)
+def get_task_count():
+    """Оновлюємо лічильник активних завдань"""
+    from lists.models import Task
+    count = Task.objects.filter(completed=False).count()
+    active_tasks.set(count)
+    return count

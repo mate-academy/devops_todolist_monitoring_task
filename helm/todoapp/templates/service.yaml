@@ -1,16 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: todoapp-service
-  namespace: {{ .Values.namespace }}
-  labels:
-    app: todoapp
+  name: todoapp
 spec:
   type: {{ .Values.service.type }}
+  ports:
+  - port: {{ .Values.service.port }}
+    targetPort: http
+    protocol: TCP
+    name: http
   selector:
     app: todoapp
-  ports:
-  - name: http
-    protocol: TCP
-    port: {{ .Values.service.port }}
-    targetPort: {{ .Values.service.targetPort }}
