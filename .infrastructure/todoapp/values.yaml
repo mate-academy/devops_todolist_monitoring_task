@@ -2,7 +2,7 @@ namespace: todoapp
 
 image:
   repository: tanyasavenko/todoapp
-  tag: "4.0.1"
+  tag: "4.0.2"
 
 resources:
   requests:
