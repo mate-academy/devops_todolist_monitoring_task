@@ -1,0 +1,54 @@
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 8080
+  labels:
+    release: kube-prometheus-stack
+
+database:
+  host: mysql-0.mysql.mysql.svc.cluster.local
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+
+serviceAccount:
+  create: false
+  automount: true
+  annotations: {}
+  name: ""
+
+image:
+  repository: todoapp
+  pullPolicy: IfNotPresent
+  tag: latest
+
+imagePullSecrets: []
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+resources: {}
+
+livenessProbe: {}
+readinessProbe: {}
+
+volumeMounts: []
+volumes: []
+
+nodeSelector: {}
+affinity: {}
+tolerations: []
+
+serviceMonitor:
+  enabled: true
+  labels: {}
+  interval: 10s
+  path: /metrics
+  port: http
