@@ -1,3 +1,5 @@
+replicaCount: 1
+
 service:
   type: ClusterIP
   port: 8080
@@ -23,6 +25,26 @@ image:
   repository: todoapp
   pullPolicy: IfNotPresent
   tag: latest
+
+imagePullSecrets: []
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+resources: {}
+
+livenessProbe: {}
+readinessProbe: {}
+
+volumeMounts: []
+volumes: []
+
+nodeSelector: {}
+affinity: {}
+tolerations: []
 
 serviceMonitor:
   enabled: true

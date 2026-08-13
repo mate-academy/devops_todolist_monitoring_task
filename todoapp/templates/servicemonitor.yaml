@@ -6,6 +6,9 @@ metadata:
   labels:
     release: kube-prometheus-stack
     {{- include "todoapp.labels" . | nindent 4 }}
+    {{- with .Values.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   selector:
     matchLabels:
