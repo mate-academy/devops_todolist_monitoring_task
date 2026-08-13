@@ -1,0 +1,5 @@
+apiVersion: v2
+name: todoapp
+description: Helm chart for the todoapp with Prometheus monitoring
+version: 0.1.0
+appVersion: "4.0.1"
