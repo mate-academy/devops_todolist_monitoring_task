@@ -1,0 +1,20 @@
+{{- if .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: todoapp
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- toYaml .Values.serviceMonitor.labels | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: todoapp
+  namespaceSelector:
+    matchNames:
+      - {{ .Values.namespace }}
+  endpoints:
+    - port: {{ .Values.serviceMonitor.port }}
+      path: {{ .Values.serviceMonitor.path }}
+      interval: {{ .Values.serviceMonitor.interval }}
+{{- end }}
