@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: todoapp
-  namespace: todoapp
 spec:
   strategy:
     type: RollingUpdate
@@ -17,10 +16,9 @@ spec:
       labels:
         app: todoapp
     spec:
-      serviceAccountName: secrets-reader
       containers:
       - name: todoapp
-        image: ikulyk404/todoapp:4.0.1
+        image: ivanoid777/todoapp:4.0.0
         volumeMounts:
         - name: data
           mountPath: /app/data
