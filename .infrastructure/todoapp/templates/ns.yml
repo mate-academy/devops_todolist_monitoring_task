@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: todoapp
+
+---
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mateapp

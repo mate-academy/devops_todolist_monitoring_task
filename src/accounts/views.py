@@ -1,10 +1,13 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from prometheus_client import Counter, generate_latest
 
 from accounts.forms import LoginForm, RegistrationForm
 from lists.forms import TodoForm
-
+http_requests_total = Counter('http_requests_total', 'Total HTTP requests', ['method'])
 
 def login_view(request):
     if request.method == "POST":
@@ -44,3 +47,8 @@ def register(request):
 def logout_view(request):
     logout(request)
     return redirect("lists:index")
+
+@csrf_exempt
+def metrics(request):
+    http_requests_total.labels(method=request.method).inc()
+    return HttpResponse(generate_latest(), content_type='text/plain')

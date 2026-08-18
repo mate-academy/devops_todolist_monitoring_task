@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+*.egg-info/
+# Django
+db.sqlite3
+*.log
+# IDE
+.idea/
+.vscode/
+*.swp
+# OS
+.DS_Store
+Thumbs.db
+# Docker/K8s
+*.tar
+# Env
+.env
+.env.local
