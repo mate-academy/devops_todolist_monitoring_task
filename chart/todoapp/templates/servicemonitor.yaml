@@ -1,0 +1,28 @@
+{{- if .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: todoapp
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: todoapp
+    # Required so the kube-prometheus-stack Prometheus CR (whose
+    # serviceMonitorSelector matches `release: kube-prometheus-stack`)
+    # picks this ServiceMonitor up across namespaces.
+    release: kube-prometheus-stack
+    {{- with .Values.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: todoapp
+      metrics: "true"
+  namespaceSelector:
+    matchNames:
+      - {{ .Values.namespace }}
+  endpoints:
+    - port: {{ .Values.serviceMonitor.port }}
+      path: {{ .Values.serviceMonitor.path }}
+      interval: {{ .Values.serviceMonitor.interval }}
+{{- end }}

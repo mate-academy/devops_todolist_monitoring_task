@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+venv/
+.env
+db.sqlite3
+
+# pulled by `helm pull prometheus-community/kube-prometheus-stack --untar`
+kube-prometheus-stack/
