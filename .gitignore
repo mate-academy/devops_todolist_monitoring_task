@@ -16,6 +16,7 @@ db.sqlite3
 .DS_Store
 Thumbs.db
 # Docker/K8s
+.infrastructure/todoapp/charts/kube-prometheus-stack/
 *.tar
 # Env
 .env
