@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+*.egg-info/
+# Django
+db.sqlite3
+*.log
+# IDE
+.idea/
+.vscode/
+*.swp
+# OS
+.DS_Store
+Thumbs.db
+# Docker/K8s
+.infrastructure/todoapp/charts/kube-prometheus-stack/
+*.tar
+# Env
+.env
+.env.local
