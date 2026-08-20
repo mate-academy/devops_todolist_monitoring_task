@@ -1,5 +1,4 @@
 from prometheus_client import Counter
-import time
 
 
 HTTP_REQUESTS_TOTAL = Counter(
