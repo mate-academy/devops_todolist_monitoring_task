@@ -15,6 +15,7 @@ spec:
   selector:
     matchLabels:
       app: todoapp
+      release: kube-prometheus-stack
   endpoints:
     - port: {{ .Values.serviceMonitor.port }}
       path: {{ .Values.serviceMonitor.path }}
