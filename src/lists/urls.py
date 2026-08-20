@@ -1,13 +1,13 @@
-from django.urls import path
+from django.contrib import admin
+from django.urls import include, path
 
-from lists import views
+from todolist.metrics import metrics_view
 
-app_name = "lists"
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("todolist/<int:todolist_id>/", views.todolist, name="todolist"),
-    path("todolist/new/", views.new_todolist, name="new_todolist"),
-    path("todolist/add/", views.add_todolist, name="add_todolist"),
-    path("todo/add/<int:todolist_id>/", views.add_todo, name="add_todo"),
-    path("todolists/", views.overview, name="overview"),
+    path("", include("lists.urls")),
+    path("auth/", include("accounts.urls")),
+    path("api/", include("api.urls")),
+    path("api-auth/", include("rest_framework.urls")),
+    path("admin/", admin.site.urls),
+    path("metrics", metrics_view, name="metrics"),
 ]

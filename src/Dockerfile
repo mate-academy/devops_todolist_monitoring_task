@@ -1,24 +1,19 @@
-# Stage 1: Build Stage
-ARG PYTHON_VERSION=3.8
-FROM python:${PYTHON_VERSION} as builder
+FROM python:3.11-slim
 
-# Set the working directory
 WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
 COPY . .
 
-# Stage 2: Run Stage
-FROM python:${PYTHON_VERSION} as run
 
-WORKDIR /app
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD python -c "import requests; requests.get('http://localhost:8080/api/health')"
 
-ENV PYTHONUNBUFFERED=1
-
-COPY --from=builder /app .
-
-RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
-
-EXPOSE 8080
-
-# Run database migrations and start the Django application
-ENTRYPOINT ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8080"]
+# Запуск з gunicorn
+CMD ["gunicorn", \
+     "--bind", "0.0.0.0:8080", \
+     "--workers", "3", \
+     "--timeout", "30", \
+     "todolist.wsgi:application"]

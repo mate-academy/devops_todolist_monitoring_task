@@ -51,6 +51,7 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "todolist.metrics.PrometheusMetricsMiddleware",
 )
 
 ROOT_URLCONF = "todolist.urls"
@@ -125,3 +126,4 @@ TEMPLATES = [
         },
     },
 ]
+PROMETHEUS_METRICS_ENABLED = True
