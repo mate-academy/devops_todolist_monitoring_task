@@ -1,0 +1,14 @@
+replicaCount: 1
+image:
+  repository: metrics-image
+  tag: latest
+  pullPolicy: Never
+service:
+  type: ClusterIP
+  port: 8080
+serviceMonitor:
+  enabled: true
+  labels: {}
+  interval: 10s
+  path: /metrics
+  port: http

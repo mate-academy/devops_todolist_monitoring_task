@@ -1,0 +1,4 @@
+apiVersion: v2
+name: todoapp
+description: A Helm chart for Todo application
+version: 0.1.0
