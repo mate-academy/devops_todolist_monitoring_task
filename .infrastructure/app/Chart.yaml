@@ -1,0 +1,4 @@
+apiVersion: v2
+name: todoapp
+description: A Helm chart for Django ToDo App
+version: 0.1.0
