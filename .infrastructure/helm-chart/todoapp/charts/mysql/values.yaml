@@ -1,0 +1,49 @@
+namespace: mysql
+
+image:
+  repository: mysql
+  tag: "8.0"
+
+secrets:
+  MYSQL_ROOT_PASSWORD: "1234"
+  MYSQL_USER: "app_user"
+  MYSQL_PASSWORD: "1234"
+  MYSQL_DATABASE: "app_db"
+
+replicaCount: 2
+
+pvc:
+  storage: 2Gi
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 500m
+    memory: 1Gi
+
+tolerations:
+  - key: "app"
+    operator: "Equal"
+    value: "mysql"
+    effect: "NoSchedule"
+
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+            - key: "app"
+              operator: In
+              values:
+                - mysql
+        topologyKey: "kubernetes.io/hostname"
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: "app"
+              operator: In
+              values:
+                - "mysql"

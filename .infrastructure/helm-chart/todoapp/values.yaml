@@ -1,0 +1,65 @@
+namespace: todoapp
+
+serviceAccount:
+  name: secrets-reader
+serviceAccountName: secrets-reader
+
+image:
+  repository: ikulyk404/todoapp
+  tag: "4.0.1"
+
+secrets:
+  SECRET_KEY: "django-insecure-todoapp-secret-key"
+  DB_NAME: "app_db"
+  DB_USER: "app_user"
+  DB_PASSWORD: "1234"
+  DB_HOST: "mysql-0.mysql.mysql.svc.cluster.local"
+
+config:
+  PYTHONUNBUFFERED: "1"
+
+service:
+  port: 80
+  targetPort: 8080
+  nodePort: 30007
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "150m"
+  limits:
+    memory: "256Mi"
+    cpu: "150m"
+
+rollingUpdate:
+  maxSurge: 1
+  maxUnavailable: 1
+
+affinity:
+  key: app
+  values:
+    - todoapp
+
+hpa:
+  minReplicas: 2
+  maxReplicas: 5
+  cpu: 70
+  memory: 70
+
+pv:
+  capacity: 1Gi
+  hostPath: /data/
+
+pvc:
+  storage: 1Gi
+
+mysql:
+  namespace: mysql
+
+serviceMonitor:
+  enabled: true
+  labels:
+    release: prometheus
+  interval: 10s
+  path: /metrics
+  port: http

@@ -1,0 +1,12 @@
+# Overrides for kube-prometheus-stack on kind / Ubuntu
+# Usage:
+#   helm install kube-prometheus-stack ./kube-prometheus-stack \
+#     -f .infrastructure/kube-prometheus-stack-values.yaml
+
+prometheusOperator:
+  admissionWebhooks:
+    enabled: false
+
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
