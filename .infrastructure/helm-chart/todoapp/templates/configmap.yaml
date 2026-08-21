@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-config
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Chart.Name }}
+data:
+  PYTHONUNBUFFERED: {{ .Values.config.PYTHONUNBUFFERED | quote }}
