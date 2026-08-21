@@ -5,6 +5,7 @@ metadata:
   namespace: todoapp
   labels:
     app: todoapp
+    release: prometheus
 spec:
   type: ClusterIP
   selector:

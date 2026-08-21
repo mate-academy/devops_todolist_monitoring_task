@@ -13,6 +13,9 @@ spec:
   selector:
     matchLabels:
       app: {{ .Chart.Name }}
+      {{- with .Values.serviceMonitor.labels }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
   endpoints:
     - port: {{ .Values.serviceMonitor.port }}
       path: {{ .Values.serviceMonitor.path }}
