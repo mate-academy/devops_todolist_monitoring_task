@@ -5,6 +5,11 @@ HTTP_REQUESTS_TOTAL = Counter(
     'Total HTTP Requests',
     ['method']
 )
+http_requests_created = Gauge(
+    "http_requests_created",
+    "Time when HTTP request counters were created or reset",
+    ["method"],
+)
 
 class PrometheusMetricsMiddleware:
     def __init__(self, get_response):
@@ -12,4 +17,5 @@ class PrometheusMetricsMiddleware:
 
     def __call__(self, request):
         HTTP_REQUESTS_TOTAL.labels(method=request.method).inc()
+        http_requests_created.labels(method=request.method).set_to_current_time()
         return self.get_response(request)
