@@ -2,6 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: todoapp-monitor
+  namespace: {{ .Values.common.namespace }}
   labels:
     release: prometheus
 spec:
@@ -9,6 +10,6 @@ spec:
     matchLabels:
       app: todoapp
   endpoints:
-    - port: http
-      path: /metrics
-      interval: 10s
+    - port: {{ .Values.servicemonitor.port }}
+      path: {{ .Values.servicemonitor.path }}
+      interval: {{ .Values.servicemonitor.interval }}

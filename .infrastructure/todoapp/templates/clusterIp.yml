@@ -1,16 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: todoapp-service
-  namespace: todoapp
-  labels:
-    app: todoapp
+  name: {{ .Chart.Name }}-service
+  namespace: {{ .Values.common.namespace }}
 spec:
   type: ClusterIP
   selector:
-    app: todoapp
+    app: {{ .Chart.Name }}
   ports:
-  - name: http
-    protocol: TCP
+  - protocol: TCP
     port: 80
     targetPort: 8080

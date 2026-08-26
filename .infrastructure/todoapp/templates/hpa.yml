@@ -1,25 +1,27 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: todoapp
-  namespace: todoapp
+  name: {{ .Chart.Name }}-hpa
+  namespace: {{ .Values.common.namespace }}
 spec:
+  {{- with .Values.todoapp.hpa}}
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: todoapp
-  minReplicas: 2
-  maxReplicas: 5
+    name: {{ $.Release.Name }}-deployment
+  minReplicas: {{ .minReplicas }}
+  maxReplicas: {{ .maxReplicas }}
   metrics:
   - type: Resource
     resource:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: 70
+        averageUtilization: {{ .cpu.averageUtilization }}
   - type: Resource
     resource:
       name: memory
       target:
         type: Utilization
-        averageUtilization: 70
+        averageUtilization: { { .memory.averageUtilization } }
+  {{ - end }}
