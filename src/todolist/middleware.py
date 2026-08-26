@@ -1,5 +1,5 @@
 import time
-from prometheus_client import Counter
+from prometheus_client import Counter, Gauge
 
 HTTP_REQUESTS_TOTAL = Counter(
     'http_requests_total',
