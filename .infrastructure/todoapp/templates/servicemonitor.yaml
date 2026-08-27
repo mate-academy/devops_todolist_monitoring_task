@@ -10,6 +10,6 @@ spec:
     matchLabels:
       app: todoapp
   endpoints:
-    - port: {{ .Values.servicemonitor.port }}
-      path: {{ .Values.servicemonitor.path }}
-      interval: {{ .Values.servicemonitor.interval }}
+    - port: {{ .Values.serviceMonitor.port }}
+      path: {{ .Values.serviceMonitor.path }}
+      interval: {{ .Values.serviceMonitor.interval }}

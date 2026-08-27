@@ -17,45 +17,45 @@ todoapp:
     DB_PASSWORD: "1234"
     DB_HOST: "mysql-0.mysql.mysql.svc.cluster.local"
 
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "150m"
+    limits:
+      memory: "256Mi"
+      cpu: "150m"
+
+  rollingUpdate:
+    maxUnavailable: 1
+    maxSurge: 1
+
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 1
+          preference:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - todoapp
+  hpa:
+    minReplicas: 2
+    maxReplicas: 5
+    cpu:
+      averageUtilization: 70
+    memory:
+      averageUtilization: 70
+
+  capacity:
+    storage: 1Gi
+
+  pvc:
     resources:
       requests:
-        memory: "256Mi"
-        cpu: "150m"
-      limits:
-        memory: "256Mi"
-        cpu: "150m"
+        storage: 1Gi
 
-    rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 1
-
-    affinity:
-      nodeAffinity:
-        preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-            preference:
-              matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                    - todoapp
-    hpa:
-      minReplicas: 2
-      maxReplicas: 5
-      cpu:
-        averageUtilization: 70
-      memory:
-        averageUtilization: 70
-
-    capacity:
-      storage: 1Gi
-
-    pvc:
-      resources:
-        requests:
-          storage: 1Gi
-
-    serviceAccountName: secrets-reader
+  serviceAccountName: secrets-reader
 
 service:
   type: ClusterIP
