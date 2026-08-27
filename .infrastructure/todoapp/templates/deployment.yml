@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name}}-deployment
+  namespace: {{ .Values.common.namespace }}
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .Values.todoapp.rollingUpdate.maxSurge }}
+      maxUnavailable: {{ .Values.todoapp.rollingUpdate.maxUnavailable }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      serviceAccountName: {{ .Values.todoapp.serviceAccountName }}
+      containers:
+      - name: {{ .Values.todoapp.image.name }}
+        image: {{ .Values.todoapp.image.repository }}:{{ .Values.todoapp.image.version }}
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: data
+          mountPath: /app/data
+        - name: {{ .Chart.Name }}-secrets-volume
+          mountPath: "/app/secrets"
+          readOnly: true
+        - name: {{ .Chart.Name }}-config-volume
+          mountPath: "/app/configs"
+          readOnly: true
+        resources:
+          requests:
+            memory: {{ .Values.todoapp.resources.requests.memory }}
+            cpu: {{ .Values.todoapp.resources.requests.cpu }}
+          limits:
+              memory: {{ .Values.todoapp.resources.limits.memory }}
+              cpu: {{ .Values.todoapp.resources.limits.cpu }}
+        env:
+        {{- range $k, $v := .Values.todoapp.configs }}
+        - name: {{ $k }}
+          valueFrom:
+            configMapKeyRef:
+              name: {{ $.Chart.Name }}-config
+              key: {{ $k }}
+        {{- end }}
+        {{- range $k, $v := .Values.todoapp.secrets }}
+        - name: {{ $k }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ $.Chart.Name }}-secret
+              key: {{ $k }}
+        {{- end }}
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: api/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: api/ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: {{ .Chart.Name }}-pvc
+
+      - name: {{ .Chart.Name }}-secrets-volume
+        secret:
+          secretName: {{ .Chart.Name }}-secret
+
+      - name: {{ .Chart.Name }}-config-volume
+        configMap:
+          name: {{ .Chart.Name }}-config
+
+     {{- with .Values.todoapp.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
