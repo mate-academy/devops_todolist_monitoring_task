@@ -36,12 +36,6 @@ nodes:
     hostPort: 30007
   - containerPort: 30008
     hostPort: 30008
-  - containerPort: 80
-    hostPort: 80
-    protocol: TCP
-  - containerPort: 443
-    hostPort: 443
-    protocol: TCP
 # the two workers
 - role: worker
   extraMounts:

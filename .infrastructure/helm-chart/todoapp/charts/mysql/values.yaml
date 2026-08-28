@@ -1,0 +1,44 @@
+common:
+  namespace: mysql
+
+mysql:
+  secrets:
+    MYSQL_ROOT_PASSWORD: "1234"
+    MYSQL_USER: "app_user"
+    MYSQL_PASSWORD: "1234"
+
+  statefulSet:
+    replicas: 2
+
+  image:
+    repository: mysql
+    version: "8.0"
+
+  volumeClaimTemplates:
+    storage: 2Gi
+
+  affinity:
+    podAntiAffinity:
+      key: app
+      operator: In
+      values:
+       - mysql
+    nodeAffinity:
+      key: "app"
+      operator: In
+      values:
+      - mysql
+
+  tolerations:
+    key: app
+    operator: Equal
+    value: mysql
+    effect: NoSchedule
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 500m
+      memory: 1Gi
