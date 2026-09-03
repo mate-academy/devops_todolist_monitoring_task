@@ -1,0 +1,5 @@
+venv/
+src/venv/
+__pycache__/
+kube-prometheus-stack/
+*.pyc
