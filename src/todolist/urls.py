@@ -8,5 +8,5 @@ urlpatterns = [
     path("api/", include("api.urls")),
     path("api-auth/", include("rest_framework.urls")),
     path("admin/", admin.site.urls),
-    path('metrics/', metrics_view, name='prometheus-metrics'),
+    path('metrics', metrics_view, name='prometheus-metrics'),
 ]

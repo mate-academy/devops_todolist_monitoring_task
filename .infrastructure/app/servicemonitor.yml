@@ -11,5 +11,5 @@ spec:
       app: todoapp
   endpoints:
     - port: http
-      path: /metrics/
+      path: /metrics
       interval: 10s
