@@ -1,0 +1,34 @@
+replicaCount: 2
+
+image:
+  repository: todoapp
+  tag: "monitoring"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+  metricsPort: 8080
+
+serviceMonitor:
+  enabled: true
+  labels:
+    release: prometheus
+  interval: 10s
+  path: /metrics
+  port: http
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+hpa:
+  minReplicas: 2
+  maxReplicas: 5
+  cpuUtilization: 70
+  memoryUtilization: 80

@@ -4,6 +4,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from lists.forms import TodoForm, TodoListForm
 from lists.models import Todo, TodoList
+from prometheus_client import generate_latest
+
+def metrics(request):
+    return HttpResponse(
+        generate_latest(),
+        content_type="text/plain; version=0.0.4; charset=utf-8",
+    )
 
 
 def index(request):

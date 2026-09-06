@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: todoapp-pvc
+  namespace: todoapp
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  volumeName: todoapp-pv
+  resources:
+    requests:
+      storage: 1Gi
