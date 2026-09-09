@@ -1,0 +1,116 @@
+# ─── Image ────────────────────────────────────────────────────────────────────
+image:
+  repository: ikulyk404/todoapp
+  tag: "4.0.1"
+  pullPolicy: IfNotPresent
+
+# ─── Replica count ───────────────────────────────────────────────────────────
+replicaCount: 1
+
+# ─── Resources ────────────────────────────────────────────────────────────────
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "150m"
+  limits:
+    memory: "256Mi"
+    cpu: "150m"
+
+# ─── Liveness / Readiness probes ─────────────────────────────────────────────
+livenessProbe:
+  path: /api/health
+  port: 8080
+  initialDelaySeconds: 60
+  periodSeconds: 5
+
+readinessProbe:
+  path: /api/ready
+  port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+# ─── Service (ClusterIP) ─────────────────────────────────────────────────────
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+# ─── NodePort Service ────────────────────────────────────────────────────────
+nodePort:
+  enabled: true
+  port: 80
+  targetPort: 8080
+  nodePort: 30007
+
+# ─── Ingress ─────────────────────────────────────────────────────────────────
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  rules:
+    - http:
+        paths:
+          - path: /(|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: todoapp-service
+                port:
+                  number: 80
+
+# ─── HPA ─────────────────────────────────────────────────────────────────────
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 70
+
+# ─── Persistent Volume / Claim ───────────────────────────────────────────────
+persistence:
+  storageClass: standard
+  reclaimPolicy: Delete
+  accessMode: ReadWriteMany
+  size: 1Gi
+  hostPath: /data/
+
+# ─── ConfigMap ────────────────────────────────────────────────────────────────
+configMap:
+  PYTHONUNBUFFERED: "1"
+
+# ─── Secret (base64-encoded values) ──────────────────────────────────────────
+secret:
+  SECRET_KEY: QGUyKHl4KXYmdGdoM19zPTB5amEtaSFkcGVieHN6XmRnNDd4KS1rJmtxXzN6Zio5ZSoK
+  DB_NAME: YXBwX2RiCg==
+  DB_USER: YXBwX3VzZXI=
+  DB_PASSWORD: MTIzNA==
+  DB_HOST: bXlzcWwtMC5teXNxbC5teXNxbC5zdmMuY2x1c3Rlci5sb2NhbAo=
+
+# ─── ServiceMonitor (Prometheus) ─────────────────────────────────────────────
+serviceMonitor:
+  enabled: true
+  labels: {}
+  interval: 10s
+  path: /metrics
+  port: http
+
+# ─── Node affinity ────────────────────────────────────────────────────────────
+nodeAffinity:
+  enabled: true
+  label: kube2py
+
+# ─── RBAC (secrets-reader) ──────────────────────────────────────────────────
+rbac:
+  enabled: true
