@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: mysql
+data:
+  {{- range $key, $value := .Values.configMap }}
+  {{ $key }}: |
+    {{- $value | nindent 4 }}
+  {{- end }}
