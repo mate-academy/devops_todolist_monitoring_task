@@ -15,6 +15,8 @@ ENV PYTHONUNBUFFERED=1
 
 COPY --from=builder /app .
 
+# Requirements are used here, new dependency processed here.
+# Force build next time to fetch dependency changes.
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
