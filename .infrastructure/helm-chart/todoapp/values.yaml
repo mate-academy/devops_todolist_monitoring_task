@@ -1,0 +1,49 @@
+common:
+  namespace: todoapp
+todoapp:
+  image:
+    repository: vadym192/todoapp
+    tag: "4.0.0"
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "150m"
+    limits:
+      memory: "256Mi"
+      cpu: "150m"
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+  hpa:
+    minReplicas: 2
+    maxReplicas: 5
+    cpuAverageUtilization: 70
+    memoryAverageUtilization: 70
+  pv:
+    storage: 1Gi
+  pvc:
+    storage: 1Gi
+  serviceAccountName: secrets-reader
+  configs:
+    PYTHONUNBUFFERED: "1"
+  secrets:
+    SECRET_KEY: QGUyKHl4KXYmdGdoM19zPTB5amEtaSFkcGVieHN6XmRnNDd4KS1rJmtxXzN6Zio5ZSoK
+    DB_NAME: "YXBwX2RiCg=="
+    DB_USER: "YXBwX3VzZXI="
+    DB_PASSWORD: "MTIzNA=="
+    DB_HOST: "bXlzcWwtMC5teXNxbC5teXNxbC5zdmMuY2x1c3Rlci5sb2NhbAo="
+  nodeAffinity:
+    type: preferredDuringSchedulingIgnoredDuringExecution
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - todoapp
+
+serviceMonitor:
+  enabled: true
+  labels:
+    release: kube-prometheus-stack  # Важливо: Prometheus шукає ServiceMonitor з цією міткою!
+  interval: 10s
+  path: /metrics
+  port: http
