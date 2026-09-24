@@ -1,0 +1,11 @@
+{{- if .Values.database.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "todoapp.fullname" . }}-mysql
+  labels:
+    {{- include "todoapp.labels" . | nindent 4 }}
+data:
+  init.sql: |
+    GRANT ALL PRIVILEGES ON {{ .Values.database.name }}.* TO '{{ .Values.database.user }}'@'%';
+{{- end }}

@@ -45,15 +45,12 @@ Follow the steps below to complete the task:
 4. Cluster setup:
    - Use `kind` to spin up a cluster from a `cluster.yml` configuration file.
 
-5. Pull the kube-prometheus-stack:
-   - [Prometheus](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
+5. Add the Prometheus Helm repository and install the kube-prometheus-stack chart directly from the source:
+   - [Prometheus Helm chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
    ```bash
-   helm pull prometheus-community/kube-prometheus-stack --version <version_number> --untar
-   ```
-
-6. Install the kube-prometheus-stack Helm chart:
-   ```bash
-   helm install kube-prometheus-stack ./kube-prometheus-stack
+   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+   helm repo update
+   helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack
    ```
     * **Note**: If you encounter issues deploying on Ubuntu, particularly related to the admission controller, find the `admissionWebhooks` section in the `values.yaml` and set:
    ```yaml
@@ -67,7 +64,7 @@ Follow the steps below to complete the task:
         enabled: true
         labels: {}
         interval: 10s
-        path: /metrics
+        path: /metrics/
         port: http
     ```
 
@@ -112,3 +109,25 @@ Follow the steps below to complete the task:
     - Utilize Grafana’s functions for formatting the display.
 
 14. Submit a PR with your changes and attach screenshots of your Grafana dashboard for validation on the specified platform.
+
+## Deployment and verification
+
+```bash
+kind create cluster --config cluster.yml
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack
+helm install todoapp ./todoapp
+kubectl get servicemonitors
+kubectl port-forward svc/$(kubectl get svc -o name | grep todoapp | head -n 1 | sed 's#service/##') 8080:80
+curl -s http://localhost:8080/metrics/ | grep -E 'http_requests_total|http_requests_created_at'
+```
+
+ In Grafana, verify the following panels:
+
+```bash
+sum(rate(http_requests_total[5m])) by (method)
+http_requests_created_at
+```
+
+The first query shows the request rate per method (GET/POST); the second displays the startup timestamp for the metric counters and is useful for confirming a fresh restart.

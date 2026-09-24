@@ -1,0 +1,17 @@
+{{- if .Values.database.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "todoapp.fullname" . }}-mysql
+  labels:
+    {{- include "todoapp.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: {{ include "todoapp.name" . }}-mysql
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: mysql
+{{- end }}
