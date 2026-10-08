@@ -1,0 +1,2 @@
+venv/
+.infrastructure/helm-charts/todoapp/charts/kube-prometheus-stack

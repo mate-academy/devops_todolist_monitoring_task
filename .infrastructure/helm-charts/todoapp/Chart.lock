@@ -1,0 +1,9 @@
+dependencies:
+- name: mysql
+  repository: ""
+  version: 0.1.0
+- name: kube-prometheus-stack
+  repository: ""
+  version: 92.1.0
+digest: sha256:e464e139fa9903a4c67dbeb8bc0632e26eb3638f892c47e1344e5ea750182a92
+generated: "2026-10-08T18:41:24.037776864+02:00"
