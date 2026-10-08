@@ -61,19 +61,3 @@ nodes:
       containerPath: /data
   labels:
     app: todoapp
-- role: worker
-  extraMounts:
-    - hostPath: /tmp
-      containerPath: /data
-  labels:
-    app: todoapp
-- role: worker
-  extraMounts:
-    - hostPath: /tmp
-      containerPath: /data
-  labels:
-    app: todoapp
-- role: worker
-  extraMounts:
-    - hostPath: /tmp
-      containerPath: /data

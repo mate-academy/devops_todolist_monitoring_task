@@ -1,0 +1,20 @@
+{{ if eq .Values.todoapp.serviceMonitor.enabled true }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    {{- toYaml .Values.todoapp.serviceMonitor.labels | nindent 4 }}
+  name: prometheus-k8s
+  namespace: monitoring
+spec:
+  endpoints:
+  - interval: {{ .Values.todoapp.serviceMonitor.interval }}
+    path: {{ .Values.todoapp.serviceMonitor.path}}
+    port: {{ .Values.todoapp.serviceMonitor.port}}
+  namespaceSelector:
+    matchNames:
+      - {{ .Values.common.namespace }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+{{ end }}

@@ -1,0 +1,67 @@
+common:
+  namespace: todoapp
+
+kube-prometheus-stack:
+  prometheusOperator:
+    admissionWebhooks:
+      enabled: false
+
+todoapp:
+  image:
+    name: todoapp
+    repository: kapany322/todoapp
+    version: 4.0.0
+
+  configs:
+    PYTHONUNBUFFERED: "1"
+
+  secrets:
+    SECRET_KEY: QGUyKHl4KXYmdGdoM19zPTB5amEtaSFkcGVieHN6XmRnNDd4KS1rJmtxXzN6Zio5ZSoK
+    DB_NAME: "YXBwX2RiCg=="
+    DB_USER: "YXBwX3VzZXI="
+    DB_PASSWORD: "MTIzNA=="
+    DB_HOST: "bXlzcWwtMC5teXNxbC5teXNxbC5zdmMuY2x1c3Rlci5sb2NhbAo="
+
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "150m"
+    limits:
+      memory: "256Mi"
+      cpu: "150m"
+
+  affinity:
+    matchExpressions:
+      key: app
+      values:
+      - kube2py
+
+  hpa:
+    minReplicas: 2
+    maxReplicas: 3
+    cpu:
+      averageUtilization: 70
+    memory:
+      averageUtilization: 70
+
+  pvc:
+    resources:
+      requests:
+        storage: 1Gi
+  pv:
+    capacity:
+      storage: 1Gi
+    path: /data/
+
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: todoapp-release
+    interval: 10s
+    path: /metrics
+    port: http
