@@ -1,0 +1,20 @@
+replicaCount: 1
+
+image:
+  repository: todoapp
+  tag: monitoring
+  pullPolicy: IfNotPresent
+
+secretKey: local-kind-secret
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+serviceMonitor:
+  enabled: true
+  labels: {}
+  interval: 10s
+  path: /metrics
+  port: http

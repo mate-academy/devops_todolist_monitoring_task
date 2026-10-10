@@ -112,3 +112,10 @@ Follow the steps below to complete the task:
     - Utilize Grafana’s functions for formatting the display.
 
 14. Submit a PR with your changes and attach screenshots of your Grafana dashboard for validation on the specified platform.
+
+## Grafana Dashboard
+
+The dashboard visualizes the HTTP request rate grouped by method and the
+creation time of the Prometheus counters.
+
+![Todo Application Monitoring dashboard](docs/grafana-dashboard.png)
