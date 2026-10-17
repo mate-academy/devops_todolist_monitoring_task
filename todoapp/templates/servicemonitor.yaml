@@ -1,0 +1,26 @@
+{{- if .Values.serviceMonitor.enabled }}
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+
+metadata:
+  name: todoapp-monitor
+  namespace: todoapp
+  labels:
+    release: {{ .Values.serviceMonitor.labels.release }}
+
+spec:
+  selector:
+    matchLabels:
+        app: todoapp
+
+  namespaceSelector:
+    matchNames:
+      - todoapp
+
+  endpoints:
+    - port: {{ .Values.serviceMonitor.port }}
+      path: {{ .Values.serviceMonitor.path }}
+      interval: {{ .Values.serviceMonitor.interval }}
+
+{{- end }}
