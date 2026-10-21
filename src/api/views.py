@@ -1,3 +1,6 @@
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
+from django.http import HttpResponse
+
 from django.contrib.auth.models import User
 from rest_framework import permissions, viewsets
 
@@ -9,7 +12,7 @@ from django.utils import timezone
 import time
 
 startup_time = timezone.now()
-
+http_requests_total = Counter('http_requests_total', 'Total HTTP Requests', ['method', 'endpoint'])
 class IsCreatorOrReadOnly(permissions.BasePermission):
     """
     Object-level permission to only allow owners of an object to edit it.
@@ -74,3 +77,8 @@ def ready(request):
     else:
         # After 30 seconds, return HTTP 200
         return HttpResponse("Readiness OK", content_type="text/plain")
+
+def metrics(request):
+    return HttpResponse(
+generate_latest(), content_type=CONTENT_TYPE_LATEST,
+    )
