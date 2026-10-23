@@ -1,0 +1,5 @@
+apiVersion: v2
+name: todoapp
+description: Todo list app with Prometheus metrics
+version: 0.1.0
+appVersion: "1.0"
