@@ -1,0 +1,55 @@
+replicaCount: 1
+
+image:
+  repository: todoapp
+  tag: monitoring
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  create: true
+  automount: false
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+serviceMonitor:
+  enabled: true
+  labels:
+    release: kube-prometheus-stack
+  interval: 10s
+  path: /metrics
+  port: http
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    memory: 384Mi
+
+livenessProbe:
+  httpGet:
+    path: /metrics
+    port: http
+
+readinessProbe:
+  httpGet:
+    path: /metrics
+    port: http
+
+autoscaling:
+  enabled: false
+
+volumes: []
+volumeMounts: []
+nodeSelector: {}
+tolerations: []
+affinity: {}

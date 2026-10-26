@@ -44,6 +44,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE = (
+    "todolist.metrics.MetricsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
