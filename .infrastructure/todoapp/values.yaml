@@ -1,0 +1,26 @@
+replicaCount: 1
+
+image:
+  repository: drdr92/todoapp
+  tag: monitoring
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+secrets:
+  SECRET_KEY: "change-me-please"
+  DB_NAME: "app_db"
+  DB_USER: "app_user"
+  DB_PASSWORD: "1234"
+  DB_HOST: "mysql-0.mysql.mysql.svc.cluster.local"
+
+serviceMonitor:
+  enabled: true
+  labels:
+    release: kube-prometheus-stack
+  interval: 10s
+  path: /metrics
+  port: http
