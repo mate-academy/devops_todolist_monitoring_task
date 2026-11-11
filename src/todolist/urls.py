@@ -1,7 +1,10 @@
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
+
+from todolist.metrics import metrics_view
 
 urlpatterns = [
+    re_path(r"^metrics/?$", metrics_view, name="metrics"),
     path("", include("lists.urls")),
     path("auth/", include("accounts.urls")),
     path("api/", include("api.urls")),
