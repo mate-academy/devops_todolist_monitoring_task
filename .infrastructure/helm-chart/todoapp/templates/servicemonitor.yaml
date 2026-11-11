@@ -1,0 +1,21 @@
+{{- if .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-servicemonitor
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Chart.Name }}
+    release: kube-prometheus-stack
+    {{- with .Values.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  endpoints:
+    - port: {{ .Values.serviceMonitor.port }}
+      path: {{ .Values.serviceMonitor.path }}
+      interval: {{ .Values.serviceMonitor.interval }}
+{{- end }}

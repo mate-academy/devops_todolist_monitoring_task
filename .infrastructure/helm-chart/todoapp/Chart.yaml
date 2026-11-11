@@ -1,0 +1,11 @@
+apiVersion: v2
+name: todoapp
+description: A Helm chart for Django ToDo application
+type: application
+version: 0.1.0
+appVersion: "4.0.1"
+
+dependencies:
+  - name: mysql
+    version: 0.1.0
+    repository: "file://charts/mysql"
