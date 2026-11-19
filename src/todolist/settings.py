@@ -51,6 +51,7 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "api.views.count_http_requests",
 )
 
 ROOT_URLCONF = "todolist.urls"
