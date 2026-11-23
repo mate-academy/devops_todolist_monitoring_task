@@ -1,0 +1,23 @@
+replicaCount: 1
+
+image:
+  repository: todoapp
+  tag: monitoring-1
+  pullPolicy: IfNotPresent
+
+containerPort: 8080
+
+service:
+  type: ClusterIP
+  port: 80
+
+existingConfigMap: app-config
+existingSecret: app-secret
+
+serviceMonitor:
+  enabled: true
+  labels:
+    release: prometheus
+  interval: 10s
+  path: /metrics
+  port: http
