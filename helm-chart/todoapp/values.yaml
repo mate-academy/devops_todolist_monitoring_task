@@ -16,8 +16,7 @@ existingSecret: app-secret
 
 serviceMonitor:
   enabled: true
-  labels:
-    release: prometheus
+  labels: {}
   interval: 10s
   path: /metrics
   port: http
