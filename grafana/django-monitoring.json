@@ -1,0 +1,59 @@
+﻿{
+    "id":  3877539427221504,
+    "panels":  [
+                   {
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "prometheus"
+                                      },
+                       "gridPos":  {
+                                       "h":  10,
+                                       "w":  12,
+                                       "x":  0,
+                                       "y":  0
+                                   },
+                       "id":  1,
+                       "targets":  [
+                                       {
+                                           "editorMode":  "code",
+                                           "expr":  "sum(rate(http_requests_total[5m])) by (method)",
+                                           "legendFormat":  "{{method}}",
+                                           "range":  true,
+                                           "refId":  "A"
+                                       }
+                                   ],
+                       "title":  "Total HTTP Requests",
+                       "type":  "timeseries"
+                   },
+                   {
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "prometheus"
+                                      },
+                       "gridPos":  {
+                                       "h":  10,
+                                       "w":  12,
+                                       "x":  12,
+                                       "y":  0
+                                   },
+                       "id":  2,
+                       "targets":  [
+                                       {
+                                           "editorMode":  "code",
+                                           "expr":  "http_requests_created",
+                                           "legendFormat":  "{{method}}",
+                                           "range":  true,
+                                           "refId":  "A"
+                                       }
+                                   ],
+                       "title":  "HTTP Requests Creation Time",
+                       "type":  "timeseries"
+                   }
+               ],
+    "refresh":  "10s",
+    "schemaVersion":  39,
+    "timezone":  "browser",
+    "title":  "Django Monitoring",
+    "uid":  "djangomon",
+    "version":  1
+}

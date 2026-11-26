@@ -1,4 +1,4 @@
-"""
+﻿"""
 Django settings for todolist project.
 
 For more information on this file, see
@@ -51,6 +51,7 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "todolist.middleware.PrometheusMetricsMiddleware",
 )
 
 ROOT_URLCONF = "todolist.urls"
@@ -125,3 +126,4 @@ TEMPLATES = [
         },
     },
 ]
+
